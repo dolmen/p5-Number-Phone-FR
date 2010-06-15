@@ -1,0 +1,15 @@
+MYMETA.yml
+Build
+Build.bat
+Built.cmd
+_build/
+blib/
+MANIFEST
+META.yml
+*.bak
+*.old
+*.tmp
+cover_db/
+lib/Number/Phone/FR/Full.pm
+Number-Phone-FR-*.tar.gz
+Number-Phone-FR-*/
