@@ -1,0 +1,34 @@
+package Number::Phone::FR::Full;
+
+use strict;
+use warnings;
+
+our $VERSION = '0.01";
+
+use Scalar::Util 'blessed';
+
+
+our @ISA = 'Number::Phone';
+
+sub RE_0() {
+    qr/[% RE_0 %]/
+}
+
+sub RE_FULL() {
+    qr/[% RE_FULL %]/
+}
+
+sub RE_PFX() {
+    qr/[% RE_PFX %]/
+}
+
+
+sub is_valid
+{
+    my $self = shift;
+
+    return 1 if blessed($self) && $self->isa(__PACKAGE);
+}
+
+
+1;

@@ -1,46 +1,55 @@
-package Number::Phone::FR;
-
+use utf8;
 use strict;
 use warnings;
 
+package Number::Phone::FR;
+
 our $VERSION = '0.01';
 
+use Carp;
+use Number::Phone;
+
 use base 'Number::Phone';
-$Number::Phone::subclasses{country_code()} = __PACKAGE__;
+
+
+sub country_code() { 33 }
+
+#$Number::Phone::subclasses{country_code()} = __PACKAGE__;
 
 use Scalar::Util 'blessed';
+
+our $use_cache = 1;
+my %cache;
 
 {
 sub RE() {
   qr{
   ^ (?:
     1 (?:
-        0[0-9]{2}  # Opérateur
+        0[0-9]{2}  # OpÃ©rateur
       | 5          # SAMU
       | 7          # Police/gendarmerie
       | 8          # Pompiers
       | 1 (?:
-            2      # Numéro d'urgence européen
+            2      # NumÃ©ro d'urgence europÃ©en
           | 5      # Urgences sociales
-	  | [68][0-9]{3}  # 116000 : Enfance maltraitée
-                          # 118XYZ : Renseignements téléphoniques
-	  | 9      # Enfance maltraitée
+	  | [68][0-9]{3}  # 116000 : Enfance maltraitÃ©e
+                          # 118XYZ : Renseignements tÃ©lÃ©phoniques
+	  | 9      # Enfance maltraitÃ©e
 	  )
       )
-  | 3([0-9]{3})
-  |
-     ( \+33        # Préfixe international
-     | [04789]     # Transporteur par défaut (0) ou Sélection du transporteur
-     | 16 [0-9]{2} # Sélection du transporteur
-     )
-     [1-9]{9}      # Numéro de ligne
+  | 3(?:[0-9]{3})
+  | (?:
+       \+33        # PrÃ©fixe international
+     | [04789]     # Transporteur par dÃ©faut (0) ou SÃ©lection du transporteur
+     | 16 [0-9]{2} # SÃ©lection du transporteur
+    ) [0-9]{9}     # NumÃ©ro de ligne
   ) $
   }xs
 }
 
 }
 
-sub country_code() { 33 }
 
 
 
@@ -54,25 +63,33 @@ sub new
     $num =~ s/[^+0-9]//g;
     return Number::Phone->new("+$1") if $num =~ /^(?:\+|00)((?:[^3]|3[^3]).*)$/;
 
-    return is_valid($number) ? bless(\$number, $class)
-                             : undef;
+    return is_valid($number) ? bless(\$num, $class) : undef;
 }
 
-
-my 
 
 
 sub _parse
 {
     my $number = (@_);
     $number =~ s/[^0-9+]//g;
-    if ($number !~ RE) return undef;
+    #if ($number !~ RE) return undef;
 }
 
 sub is_valid
 {
-    my $number = (@_);
-    return 1 if(blessed($number) && $number->isa(__PACKAGE__));
+    my ($number) = (@_);
+    return 1 if blessed($number) && $number->isa(__PACKAGE__);
+
+    if ($use_cache && exists $cache{$number}) {
+	return $cache{$number}->{is_valid};
+    }
+    #print "is_valid($number)\n";
+    #print RE."\n";
+    my $is_valid = $number =~ RE;
+    $cache{$number} = {
+	is_valid => $is_valid,
+    };
+    return $is_valid;
 }
 
 
@@ -100,6 +117,6 @@ L<http://rt.cpan.org/>
 
 =head1 AUTHOR
 
-Copyright E<copy> 2010 Olivier Mengué
+Copyright E<copy> 2010 Olivier MenguÃ©
 
 =cut
