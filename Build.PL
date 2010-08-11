@@ -21,9 +21,9 @@ my $builder = $build_module->new(
 	license              => 'perl',
 	meta_add             => {
 		resources => {
-			homepage => '',
-			repository => '',
-			bugtracker => '',
+			homepage => 'http://github.com/dolmen/Number-Phone-FR-perl',
+			repository => 'git@github.com:dolmen/Number-Phone-FR-perl.git',
+			bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR',
 		},
 	},
 	requires => {
