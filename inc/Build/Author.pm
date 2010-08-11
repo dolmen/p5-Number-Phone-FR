@@ -52,7 +52,7 @@ sub ACTION_parse
     my $re_full = Regexp::Assemble->new;
     $re_full->add('1[578]', '11[259]', '116000');
     my $re_pfx = Regexp::Assemble->new;
-    $re_pfx->add('\+33', '0');
+    $re_pfx->add('\+33', '0033', '0');
 
     my $parser = Spreadsheet::ParseExcel->new;
     my $worksheet = $parser->parse(WOPNUM)->worksheet(0);
@@ -66,11 +66,14 @@ sub ACTION_parse
 	    when (/^[31]/) { $re_full->add($_); }
         }
     }
-    print $re_0->as_string, "\n";
-    print $re_full->as_string, "\n";
-    print $re_pfx->as_string, "\n";
+    ($re_0, $re_full, $re_pfx) = map {
+	    my $re = $_->as_string;
+	    $re =~ s/\\d/[0-9]/g;
+	    print "$re\n";
+	    $re
+	} ($re_0, $re_full, $re_pfx);
 
-    my %vars = { RE_0 => "$re_0", RE_FULL => "$re_full", RE_PFX => "$re_pfx" };
+    my %vars = ( RE_0 => $re_0, RE_FULL => $re_full, RE_PFX => $re_pfx );
 
     my $tt2 = Template->new(
     );
