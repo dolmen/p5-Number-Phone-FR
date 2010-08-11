@@ -22,7 +22,7 @@ our $use_cache = 1;
 my %cache;
 
 {
-sub RE() {
+sub RE_FULL() {
   qr{
   ^ (?:
     1 (?:
@@ -33,17 +33,19 @@ sub RE() {
       | 1 (?:
             2      # Numéro d'urgence européen
           | 5      # Urgences sociales
-	  | [68][0-9]{3}  # 116000 : Enfance maltraitée
-                          # 118XYZ : Renseignements téléphoniques
+	  | 6000          # 116000 : Enfance maltraitée
+          | 8[0-9]{3}     # 118XYZ : Renseignements téléphoniques
 	  | 9      # Enfance maltraitée
 	  )
       )
-  | 3(?:[0-9]{3})
+  | 3[0-9]{3}
   | (?:
-       \+33        # Préfixe international
-     | [04789]     # Transporteur par défaut (0) ou Sélection du transporteur
-     | 16 [0-9]{2} # Sélection du transporteur
-    ) [0-9]{9}     # Numéro de ligne
+       \+33          # Préfixe international (+33 numéro)
+     | (?:
+         [04789]     # Transporteur par défaut (0) ou Sélection du transporteur
+       | 16 [0-9]{2} # Sélection du transporteur
+       ) (033)?      # Préfixe international (0033 numéro)
+    ) [1-9][0-9]{8}  # Numéro de ligne
   ) $
   }xs
 }
@@ -72,7 +74,7 @@ sub _parse
 {
     my $number = (@_);
     $number =~ s/[^0-9+]//g;
-    #if ($number !~ RE) return undef;
+    #if ($number !~ RE_FULL) return undef;
 }
 
 sub is_valid
@@ -84,8 +86,8 @@ sub is_valid
 	return $cache{$number}->{is_valid};
     }
     #print "is_valid($number)\n";
-    #print RE."\n";
-    my $is_valid = $number =~ RE;
+    #print RE_FULL."\n";
+    my $is_valid = $number =~ RE_FULL;
     $cache{$number} = {
 	is_valid => $is_valid,
     };
