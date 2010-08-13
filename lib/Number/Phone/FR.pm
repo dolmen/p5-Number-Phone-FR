@@ -21,8 +21,21 @@ use Scalar::Util 'blessed';
 our $use_cache = 1;
 my %cache;
 
-{
-sub RE_FULL() {
+use constant RE_STD_LINE =>
+  qr{
+    ^
+    (?:
+       \+33          # Préfixe international (+33 numéro)
+     | (?:3651)?
+       (?:
+         [04789]     # Transporteur par défaut (0) ou Sélection du transporteur
+       | 16 [0-9]{2} # Sélection du transporteur
+       ) (?:033)?    # Préfixe international (0033 numéro)
+    ) ([1-9][0-9]{8})  # Numéro de ligne
+    $
+  }xs;
+
+use constant RE_FULL =>
   qr{
   ^ (?:
     1 (?:
@@ -41,16 +54,14 @@ sub RE_FULL() {
   | 3[0-9]{3}
   | (?:
        \+33          # Préfixe international (+33 numéro)
-     | (?:
+     | (?:3651)?     # Préfixe d'anonymisation
+       (?:
          [04789]     # Transporteur par défaut (0) ou Sélection du transporteur
        | 16 [0-9]{2} # Sélection du transporteur
-       ) (033)?      # Préfixe international (0033 numéro)
+       ) (?:033)?    # Préfixe international (0033 numéro)
     ) [1-9][0-9]{8}  # Numéro de ligne
   ) $
-  }xs
-}
-
-}
+  }xs;
 
 
 
@@ -70,13 +81,6 @@ sub new
 
 
 
-sub _parse
-{
-    my $number = (@_);
-    $number =~ s/[^0-9+]//g;
-    #if ($number !~ RE_FULL) return undef;
-}
-
 sub is_valid
 {
     my ($number) = (@_);
@@ -94,6 +98,124 @@ sub is_valid
     return $is_valid;
 }
 
+
+sub is_allocated
+{
+    undef
+}
+
+sub is_in_use
+{
+    undef
+}
+
+# Vérifie les chiffres du numéro de ligne
+# Les numéros spéciaux ne matchent pas
+sub _check_line
+{
+    my $num = shift; $num = shift unless ref $num;
+    return 0 unless $num =~ RE_STD_LINE;
+    my $line = $1;
+    return 1 if $line =~ shift;
+    return undef;
+}
+
+sub is_geographic
+{
+}
+
+sub is_fixed_line
+{
+}
+
+sub is_mobile
+{
+    return _check_digit(@_, qr/^[67]/)
+}
+
+sub is_pager
+{
+    undef
+}
+
+sub is_ipphone
+{
+    return _check_digit(@_, qr/^9/)
+}
+
+sub is_isdn
+{
+    undef
+}
+
+sub is_tollfree
+{
+    #return 1 
+    # FIXME Gérer les préfixes
+    return 0 unless $_[1] =~ /^08[0-9]{8}$/;
+    return undef;
+}
+
+sub is_specialrate
+{
+    # FIXME Gérer les préfixes
+    return 0 unless $_[1] =~ /^08[0-9]{8}$/;
+    return undef;
+}
+
+sub is_adult
+{
+    return undef;
+}
+
+sub is_personal
+{
+    return undef;
+}
+
+sub is_corporate
+{
+    return undef;
+}
+
+sub is_government
+{
+    return undef;
+}
+
+sub is_international
+{
+    return undef;
+}
+
+sub is_network_service
+{
+    my $num = shift; $num = shift unless ref $num;
+    return $num =~ /^1(?:0[0-9]{2}|18[0-9]{3})$/;
+}
+
+sub areacode
+{
+    undef
+}
+
+sub areaname
+{
+    undef
+}
+
+sub location
+{
+    undef
+}
+
+sub subscriber
+{
+    my $num = shift; $num = ref $num ? ${$num} : shift;
+    return $1 if $num =~ RE_STD_LINE;
+    print "# $1\n";
+    return undef;
+}
 
 1;
 __END__
