@@ -6,15 +6,6 @@ use Number::Phone;
 use Number::Phone::FR;
 
 
-my @nums_intl = qw(
-  +33148901515
-  +33627362306
-);
-
-foreach (@nums_intl) {
-    ok(Number::Phone::FR::is_valid($_), qq'"$_" is valid');
-    isa_ok(Number::Phone->new($_), 'Number::Phone::FR', $_);
-}
 
 my @network_FR = qw(
   15
@@ -32,6 +23,9 @@ my @lignes_FR = qw(
   148901515
   627362306
 );
+
+my @nums_intl = map { "+33$_" } @lignes_FR;
+
 my @nums_FR = map { my $n = $_; (map { "$_$n" } @prefixes_FR) } @lignes_FR;
 
 my @nums_FR_ok = (
@@ -43,6 +37,11 @@ my @nums_FR_ok = (
 foreach (@nums_FR_ok) {
     ok(Number::Phone::FR::is_valid($_), qq'"$_" is valid');
     isa_ok(Number::Phone::FR->new($_), 'Number::Phone::FR', $_);
+}
+
+foreach (@nums_intl) {
+    ok(Number::Phone::FR::is_valid($_), qq'"$_" is valid');
+    isa_ok(Number::Phone->new($_), 'Number::Phone::FR', $_);
 }
 
 
