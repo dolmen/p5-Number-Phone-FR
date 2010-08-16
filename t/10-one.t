@@ -18,15 +18,20 @@ my @network_FR = qw(
   1014
 );
 
-my @prefixes_FR = qw(0 4 36510 1633 +33);
-my @lignes_FR = qw(
-  148901515
+my @lignes_mobile = qw(
   627362306
 );
 
-my @nums_intl = map { "+33$_" } @lignes_FR;
+my @lignes_geo = qw(
+  148901515
+);
 
-my @nums_FR = map { my $n = $_; (map { "$_$n" } @prefixes_FR) } @lignes_FR;
+my @lignes = (@lignes_geo, @lignes_mobile);
+
+my @nums_intl = map { "+33$_" } @lignes;
+
+my @prefixes_FR = qw(0 4 36510 1633 +33);
+my @nums_FR = map { my $n = $_; (map { "$_$n" } @prefixes_FR) } @lignes;
 
 my @nums_FR_ok = (
     @network_FR,
@@ -46,7 +51,7 @@ foreach (@nums_intl) {
 
 
 my @nums_FR_ko = (
-    (map { $_.'0' } @lignes_FR),
+    (map { $_.'0' } @lignes),
     qw(
   +3317
   00330148901515
@@ -61,7 +66,7 @@ foreach (@nums_FR_ko) {
   is( Number::Phone->new($_), undef, qq'"$_" can not be created with Number::Phone');
 }
 
-for my $num (@lignes_FR) {
+for my $num (@lignes) {
     for (map { "$_$num" } @prefixes_FR) {
 	is( Number::Phone::FR->new($_)->subscriber, $num, "subscriber($_) is $num");
 	is( Number::Phone::FR->subscriber($_), $num, "subscriber($_) is $num");
