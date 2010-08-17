@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 124;
+use Test::More tests => 145;
 use Number::Phone;
 use Number::Phone::FR;
 
@@ -42,7 +42,11 @@ my @nums_FR_ok = (
 
 foreach (@nums_FR_ok) {
     ok(Number::Phone::FR::is_valid($_), qq'"$_" is valid');
-    isa_ok(Number::Phone::FR->new($_), 'Number::Phone::FR', $_);
+    my $num = Number::Phone::FR->new($_);
+    isa_ok($num, 'Number::Phone::FR', "'$_'");
+    is($num->country, 'FR', "$_->country is 'FR'");
+    # Number::Phone does support the 2-args syntax only for international format (+33...)
+    isa_ok(Number::Phone->new('FR', $_), 'Number::Phone::FR', " $_") if /^\+33/;
 }
 
 foreach (@nums_intl) {
