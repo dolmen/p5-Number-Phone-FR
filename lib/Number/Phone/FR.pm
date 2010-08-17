@@ -21,7 +21,7 @@ use Scalar::Util 'blessed';
 our $use_cache = 1;
 my %cache;
 
-use constant RE_STD_LINE =>
+use constant RE_SUBSCRIBER =>
   qr{
     ^
     (?:
@@ -113,8 +113,8 @@ sub is_in_use
 # Les numéros spéciaux ne matchent pas
 sub _check_line
 {
-    my $num = shift; $num = shift unless ref $num;
-    return 0 unless $num =~ RE_STD_LINE;
+    my $num = shift; $num = ref $num ? ${$num} : shift;
+    return 0 unless $num =~ RE_SUBSCRIBER;
     my $line = $1;
     return 1 if $line =~ shift;
     return undef;
@@ -130,7 +130,7 @@ sub is_fixed_line
 
 sub is_mobile
 {
-    return _check_digit(@_, qr/^[67]/)
+    return _check_line(@_, qr/^[67]/)
 }
 
 sub is_pager
@@ -140,7 +140,7 @@ sub is_pager
 
 sub is_ipphone
 {
-    return _check_digit(@_, qr/^9/)
+    return _check_line(@_, qr/^9/)
 }
 
 sub is_isdn
@@ -190,8 +190,9 @@ sub is_international
 
 sub is_network_service
 {
-    my $num = shift; $num = shift unless ref $num;
-    return $num =~ /^1(?:0[0-9]{2}|18[0-9]{3})$/;
+    my $num = shift; $num = ref $num ? ${$num} : shift;
+    return 1 if $num =~ /^1(?:|[578]|0[0-9]{2}|1(?:[259]|6000|8[0-9]{3}))$/;
+    return 0;
 }
 
 sub areacode
@@ -212,7 +213,7 @@ sub location
 sub subscriber
 {
     my $num = shift; $num = ref $num ? ${$num} : shift;
-    return $1 if $num =~ RE_STD_LINE;
+    return $1 if $num =~ RE_SUBSCRIBER;
     print "# $1\n";
     return undef;
 }
