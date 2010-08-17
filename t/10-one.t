@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 84;
+use Test::More tests => 124;
 use Number::Phone;
 use Number::Phone::FR;
 
@@ -13,6 +13,7 @@ my @network_FR = qw(
   18
   112
   115
+  119
   116000
   118712
   1014
@@ -73,3 +74,16 @@ for my $num (@lignes) {
     }
 }
 
+for (@network_FR) {
+    is( Number::Phone::FR->new($_)->is_network_service, 1, "$_ is network");
+    is( Number::Phone::FR->is_network_service($_), 1, "$_ is network");
+}
+
+for my $num (@lignes_mobile) {
+    for (map { "$_$num" } @prefixes_FR) {
+	is( Number::Phone::FR->new($_)->is_mobile, 1, "$_ is mobile");
+	is( Number::Phone::FR->is_mobile($_), 1, "$_ is mobile");
+	isnt( Number::Phone::FR->new($_)->is_geographic, 1, "$_ is mobile");
+	isnt( Number::Phone::FR->is_geographic($_), 1, "$_ is mobile");
+    }
+}
