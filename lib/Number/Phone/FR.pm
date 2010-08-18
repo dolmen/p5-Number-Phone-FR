@@ -18,9 +18,6 @@ sub country_code() { 33 }
 
 use Scalar::Util 'blessed';
 
-our $use_cache = 1;
-my %cache;
-
 use constant RE_SUBSCRIBER =>
   qr{
     ^
@@ -86,16 +83,7 @@ sub is_valid
     my ($number) = (@_);
     return 1 if blessed($number) && $number->isa(__PACKAGE__);
 
-    if ($use_cache && exists $cache{$number}) {
-	return $cache{$number}->{is_valid};
-    }
-    #print "is_valid($number)\n";
-    #print RE_FULL."\n";
-    my $is_valid = $number =~ RE_FULL;
-    $cache{$number} = {
-	is_valid => $is_valid,
-    };
-    return $is_valid;
+    return $number =~ RE_FULL;
 }
 
 
@@ -175,16 +163,17 @@ sub is_personal
 
 sub is_corporate
 {
-    return undef;
+    undef;
 }
 
 sub is_government
 {
-    return undef;
+    undef;
 }
 
 sub is_international
 {
+    my $num = shift; $num = ref $num ? ${$num} : shift;
     return undef;
 }
 
