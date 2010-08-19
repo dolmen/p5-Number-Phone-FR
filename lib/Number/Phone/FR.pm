@@ -105,7 +105,7 @@ sub _check_line
     return 0 unless $num =~ RE_SUBSCRIBER;
     my $line = $1;
     return 1 if $line =~ shift;
-    return undef;
+    undef
 }
 
 sub is_geographic
@@ -141,40 +141,40 @@ sub is_tollfree
     #return 1 
     # FIXME Gérer les préfixes
     return 0 unless $_[1] =~ /^08[0-9]{8}$/;
-    return undef;
+    undef
 }
 
 sub is_specialrate
 {
     # FIXME Gérer les préfixes
     return 0 unless $_[1] =~ /^08[0-9]{8}$/;
-    return undef;
+    undef
 }
 
 sub is_adult
 {
-    return undef;
+    undef
 }
 
 sub is_personal
 {
-    return undef;
+    undef
 }
 
 sub is_corporate
 {
-    undef;
+    undef
 }
 
 sub is_government
 {
-    undef;
+    undef
 }
 
 sub is_international
 {
     my $num = shift; $num = ref $num ? ${$num} : shift;
-    return undef;
+    undef
 }
 
 sub is_network_service
@@ -203,8 +203,8 @@ sub subscriber
 {
     my $num = shift; $num = ref $num ? ${$num} : shift;
     return $1 if $num =~ RE_SUBSCRIBER;
-    print "# $1\n";
-    return undef;
+    #print "# $1\n";
+    undef;
 }
 
 1;
