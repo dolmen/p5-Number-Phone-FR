@@ -114,6 +114,7 @@ sub is_geographic
 
 sub is_fixed_line
 {
+    return _check_line(@_, qr/^[12345]/)
 }
 
 sub is_mobile
@@ -148,11 +149,12 @@ sub is_specialrate
 {
     # FIXME Gérer les préfixes
     return 0 unless $_[1] =~ /^08[0-9]{8}$/;
-    undef
+    1
 }
 
 sub is_adult
 {
+    return 0 unless _check_line(@_, qr/^8/);
     undef
 }
 
