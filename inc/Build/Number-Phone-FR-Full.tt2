@@ -3,7 +3,7 @@ package Number::Phone::FR::Full;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '[% VERSION %]';
 
 use Scalar::Util 'blessed';
 

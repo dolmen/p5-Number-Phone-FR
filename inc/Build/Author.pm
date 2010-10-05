@@ -73,7 +73,10 @@ sub ACTION_parse
 	    $re
 	} ($re_0, $re_full, $re_pfx);
 
-    my %vars = ( RE_0 => $re_0, RE_FULL => $re_full, RE_PFX => $re_pfx );
+    my %vars = (
+	VERSION => $self->dist_version,
+	RE_0 => $re_0, RE_FULL => $re_full, RE_PFX => $re_pfx
+    );
 
     my $tt2 = Template->new(
     );
