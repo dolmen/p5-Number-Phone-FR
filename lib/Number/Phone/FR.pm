@@ -215,6 +215,10 @@ __END__
 
 Number::Phone::FR - Phone number information for France (+33)
 
+=head1 SYNOPSIS
+
+    use Number::Phone;
+
 =head1 DESCRIPTION
 
 This is a subclass of L<Number::Phone> that provide information for phone numbers in France.
@@ -233,6 +237,6 @@ L<http://rt.cpan.org/>
 
 =head1 AUTHOR
 
-Copyright E<copy> 2010 Olivier Mengué
+Copyright E<copy> 2010 Olivier MenguE<eacute>
 
 =cut
