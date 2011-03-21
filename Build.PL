@@ -18,11 +18,12 @@ if (-d '.git') {
 my $builder = $build_module->new(
 	module_name          => 'Number::Phone::FR',
 	dist_author          => 'Olivier Mengué <dolmen@cpan.org>',
+    dist_abstract        => 'Phone number information for France (+33)',
 	license              => 'perl',
 	meta_add             => {
 		resources => {
-			homepage => 'http://github.com/dolmen/Number-Phone-FR-perl',
-			repository => 'git@github.com:dolmen/Number-Phone-FR-perl.git',
+			homepage => 'https://github.com/dolmen/Number-Phone-FR-perl',
+			repository => 'https://github.com/dolmen/Number-Phone-FR-perl.git',
 			bugtracker => 'http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR',
 		},
 	},
