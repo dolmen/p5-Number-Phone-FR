@@ -1,11 +1,11 @@
-/MYMETA.yml
+/MYMETA.*
 /Build
 /Build.bat
 /Build.cmd
 /_build/
 /blib/
 /MANIFEST
-/META.yml
+/META.*
 /cover_db/
 /lib/Number/Phone/FR/Full.pm
 /Number-Phone-FR-*
