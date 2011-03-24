@@ -83,5 +83,10 @@ sub ACTION_parse
     $tt2->process('inc/Build/Number-Phone-FR-Full.tt2', \%vars, "lib/Number/Phone/FR/Full.pm");
 }
 
+sub ACTION_update
+{
+    my $self = shift;
+    $self->SUPER::depends_on(qw'fetch parse');
+}
 
 1;
