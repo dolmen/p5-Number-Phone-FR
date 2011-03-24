@@ -38,6 +38,26 @@ sub new
     return $self;
 }
 
+
+my %build_requires = (
+    'LWP::UserAgent' => '0',
+    'HTTP::Date' => '0',
+    'Spreadsheet::ParseExcel' => 0,
+    'Regexp::Assemble' => 0,
+    'Template' => 0,
+);
+
+sub ACTION_installdeps
+{
+    my $self = shift;
+    # Merge mainainer build_requires
+    foreach my $mod (keys %build_requires) {
+	$self->_add_prereq('build_requires', $mod, $build_requires{$mod});
+    }
+
+    $self->SUPER::ACTION_installdeps(@_);
+}
+
 sub _fetch
 {
     my ($self, $url, $file) = @_;
