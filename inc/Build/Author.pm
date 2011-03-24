@@ -1,5 +1,25 @@
 package inc::Build::Author;
 
+=head1 NAME
+
+inc::Build::Author - custom build actions for L<Number::Phone::FR>
+
+=head1 SYNOPSIS
+
+See C<Build.PL>.
+
+=head1 DESCRIPTION
+
+This modules provides additional commands for C<Build.PL> to rebuild
+L<Number::Phone::FR> from the latest data from ARCEP (telephony market
+regulation autority in France).
+
+Ce module fournit des commandes supplE<eacute>mentaires E<agrave>
+C<Build.PL> pour reconstruire L<Number::Phone::FR> E<agrave> partir des
+donnE<eacute>es les plus rE<eacute>centes de l'ARCEP.
+
+=cut
+
 use strict;
 use v5.10.0;
 use feature 'switch';
@@ -33,12 +53,29 @@ sub _fetch
     utime $t, $t, $file;
 }
 
+=head1 ACTIONS
+
+=head2 fetch
+
+RE<eacute>cupE<egrave>re la derniE<egrave>re version du fichier du
+plan de numE<eacute>rotation publiE<eacute> par l'ARCEP:
+
+L<http://www.arcep.fr/fileadmin/wopnum.xls>
+
+=cut
+
 sub ACTION_fetch
 {
     my $self = shift;
     $self->_fetch('http://www.arcep.fr/fileadmin/wopnum.xls', WOPNUM);
     return 1;
 }
+
+=head2 parse
+
+Lit le fichier L<wopnum.xls> et reconstruit L<Number::Phone::FR>.
+
+=cut
 
 sub ACTION_parse
 {
@@ -83,6 +120,15 @@ sub ACTION_parse
     $tt2->process('inc/Build/Number-Phone-FR-Full.tt2', \%vars, "lib/Number/Phone/FR/Full.pm");
 }
 
+=head2 update
+
+C<fetch> + C<parse>
+
+Met E<agrave> les donnE<eacute>es de l'ARCEP et reconstruit
+L<Number::Phone::FR>.
+
+=cut
+
 sub ACTION_update
 {
     my $self = shift;
@@ -90,3 +136,23 @@ sub ACTION_update
 }
 
 1;
+__END__
+
+=head1 SEE ALSO
+
+=over 4
+
+=item *
+
+L<Number::Phone::FR>
+
+=item *
+
+L<http://www.arcep.fr/>
+
+=back
+
+=head1 AUTHOR
+
+Olivier MenguE<eacute>, C<<<dolmen@cpan.org>>>
+
