@@ -9,7 +9,7 @@ our $VERSION = '0.01';
 use Carp;
 use Number::Phone;
 
-use base 'Number::Phone';
+use parent 'Number::Phone';
 
 
 sub country_code() { 33 }
