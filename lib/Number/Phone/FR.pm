@@ -229,14 +229,24 @@ L<http://www.arcep.fr/index.php?id=8992>
 
 =head1 SEE ALSO
 
+=over 4
+
+=item *
+
 L<http://fr.wikipedia.org/wiki/Plan_de_num%C3%A9rotation_t%C3%A9l%C3%A9phonique_en_France>
+
+=item *
+
+L<Number::Phone>
+
+=back
 
 =head1 SUPPORT
 
-L<http://rt.cpan.org/>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR>
 
 =head1 AUTHOR
 
-Copyright E<copy> 2010 Olivier MenguE<eacute>
+Copyright E<copy> 2010-2011 Olivier MenguE<eacute>
 
 =cut
