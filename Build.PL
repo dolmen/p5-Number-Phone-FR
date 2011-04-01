@@ -29,6 +29,7 @@ my $builder = $build_module->new(
 	},
 	requires => {
 		'Number::Phone' => '1.7004',
+		'parent' => '0.221',
 	},
 	configure_requires => {
 		'Module::Build' => '0.36',
