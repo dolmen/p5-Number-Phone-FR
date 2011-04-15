@@ -5,10 +5,14 @@ use warnings;
 
 our $VERSION = '[% VERSION %]';
 
+use Number::Phone::FR;
+
+use parent 'Number::Phone::FR';
 use Scalar::Util 'blessed';
 
-
-our @ISA = 'Number::Phone';
+# Number::Phone's implementation of country() does not yet allow
+# clean subclassing so we explicitely implement it here
+sub country() { 'FR' }
 
 sub RE_0() {
     qr/[% RE_0 %]/
@@ -23,12 +27,4 @@ sub RE_PFX() {
 }
 
 
-sub is_valid
-{
-    my $self = shift;
-
-    return 1 if blessed($self) && $self->isa(__PACKAGE);
-}
-
-
-1;
+1; # vim:set ft=perl et sw=4 sts=4:

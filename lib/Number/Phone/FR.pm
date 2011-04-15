@@ -12,6 +12,10 @@ use Number::Phone;
 use parent 'Number::Phone';
 
 
+our $Class = __PACKAGE__;
+
+
+
 sub country_code() { 33 }
 
 #$Number::Phone::subclasses{country_code()} = __PACKAGE__;
@@ -67,8 +71,15 @@ sub new
 {
     my $class = shift;
     my $number = shift;
+    $class = ref $class if ref $class;
+
+    # Select the implementation based on $Number::Phone::FR::Class
+    # The $Class will be loaded below when is_valid is called
+    $class = $Class;
+
     croak "No number given to ".__PACKAGE__."->new()\n" unless defined $number;
     croak "Invalid phone number (scalar expected)" if ref $number;
+
     my $num = $number;
     $num =~ s/[^+0-9]//g;
     return Number::Phone->new("+$1") if $num =~ /^(?:\+|00)((?:[^3]|3[^3]).*)$/;
@@ -77,13 +88,22 @@ sub new
 }
 
 
+sub _load_class
+{
+    my $p = $Class;
+    $p =~ s!::|'!/!g;
+    $p .= '.pm';
+    #print "$p\n";
+    eval ' require $p; 1 ' unless exists $INC{$p};
+}
 
 sub is_valid
 {
     my ($number) = (@_);
     return 1 if blessed($number) && $number->isa(__PACKAGE__);
 
-    return $number =~ RE_FULL;
+    _load_class unless $Class eq __PACKAGE__;
+    return $number =~ $Class->RE_FULL;
 }
 
 
@@ -101,8 +121,15 @@ sub is_in_use
 # Les numéros spéciaux ne matchent pas
 sub _check_line
 {
-    my $num = shift; $num = ref $num ? ${$num} : shift;
-    return 0 unless $num =~ RE_SUBSCRIBER;
+    my $num = shift;
+    my $class = ref $num;
+    if ($class) {
+	$num = ${$num};
+    } else {
+	$class = $Class;
+	$num = shift;
+    }
+    return 0 unless $num =~ $class->RE_SUBSCRIBER;
     my $line = $1;
     return 1 if $line =~ shift;
     undef
@@ -203,8 +230,15 @@ sub location
 
 sub subscriber
 {
-    my $num = shift; $num = ref $num ? ${$num} : shift;
-    return $1 if $num =~ RE_SUBSCRIBER;
+    my $num = shift;
+    my $class = ref $num;
+    if ($class) {
+	$num = ${$num};
+    } else {
+	$class = $Class;
+	$num = shift;
+    }
+    return $1 if $num =~ $class->RE_SUBSCRIBER;
     #print "# $1\n";
     undef;
 }
