@@ -1,12 +1,20 @@
 use strict;
 use warnings;
 
-use Test::More tests => 162;
 use Number::Phone;
 use Number::Phone::FR;
 
 use lib 't/lib';
 use Numeros;
+
+use Test::More tests =>
+    #88
+      (4*@Numeros::ok + 3*@Numeros::intl)
+    + 2*@Numeros::intl
+    + 3*@Numeros::ko
+    + 2*(@Numeros::lignes * @Numeros::prefixes)
+    + 2*(@Numeros::network)
+    + 4*(@Numeros::lignes_mobiles * @Numeros::prefixes);
 
 
 foreach (@Numeros::ok) {
