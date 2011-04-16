@@ -8,7 +8,6 @@ use lib 't/lib';
 use Numeros;
 
 use Test::More tests =>
-    #88
       (4*@Numeros::ok + 3*@Numeros::intl)
     + 2*@Numeros::intl
     + 3*@Numeros::ko
