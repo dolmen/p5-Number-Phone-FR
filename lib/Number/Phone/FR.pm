@@ -243,6 +243,43 @@ sub subscriber
     undef;
 }
 
+my %length_to_format = (
+    # 2 => as is
+    4 => sub { s/^(..)(..)/$1 $2/ },
+    6 => sub { s/^(...)(...)/$1 $2/ },
+    10 => sub { s/(\d\d)(?=.)/$1 /g },
+    13 => sub {
+	       s/^(00)(33)(.)(..)(..)(..)(..)$/+$2 $3 $4 $5 $6 $7/
+	    || s/^(....)(.)(..)(..)(..)(..)$/+33 $1 $2 $3 $4 $5 $6/
+	  },
+    14 => sub { s/^(....)(..)(..)(..)(..)(..)$/$1 $2 $3 $4 $5 $6/ },
+    12 => sub { s/^(\+33)(.)(..)(..)(..)(..)$/$1 $2 $3 $4 $5 $6/ },
+    16 => sub { s/^(\+33)(....)(.)(..)(..)(..)(..)$/$1 $2 $3 $4 $5 $6 $7/ },
+);
+
+sub format
+{
+    my $num = shift;
+    my $class = ref $num;
+    if ($class) {
+	$num = ${$num};
+    } else {
+	$class = $Class;
+	$num = shift;
+    }
+    my $l = length $num;
+    my $fmt = $length_to_format{$l};
+    return defined $fmt
+	?   do {
+		local $_ = $num;
+		$fmt->();
+		$_;
+	    }
+	: $num;
+}
+
+
+
 1;
 __END__
 =head1 NAME
