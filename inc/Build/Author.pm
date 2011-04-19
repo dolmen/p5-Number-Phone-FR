@@ -137,6 +137,7 @@ sub ACTION_parse
 
     my $tt2 = Template->new(
     );
+    print "Creating Number::Phone::FR::Full...\n";
     $tt2->process('inc/Build/Number-Phone-FR-Full.tt2', \%vars, "lib/Number/Phone/FR/Full.pm");
 }
 
