@@ -13,5 +13,9 @@ foreach my $fmt (@Numeros::formatted) {
     $s =~ s/[^+0-9]//g;
     my $num = Number::Phone::FR->new($s);
     isa_ok($num, 'Number::Phone::FR', "'$s'");
-    is($num->format, $fmt, "format for $s");
+    SKIP: {
+        skip "object creation failed", 1 unless defined $num;
+
+        is($num->format, $fmt, "format for $s");
+    }
 }
