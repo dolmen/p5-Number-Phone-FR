@@ -102,13 +102,13 @@ sub ACTION_parse
     my $self = shift;
     -f WOPNUM or $self->SUPER::depends_on('fetch');
     require Spreadsheet::ParseExcel;
-    require Regexp::Assemble;
+    require Regexp::Assemble::Compressed;
     require Template;
 
-    my $re_0 = Regexp::Assemble->new;
-    my $re_full = Regexp::Assemble->new;
+    my $re_0 = Regexp::Assemble::Compressed->new;
+    my $re_full = Regexp::Assemble::Compressed->new;
     $re_full->add('1[578]', '11[259]', '116000');
-    my $re_pfx = Regexp::Assemble->new;
+    my $re_pfx = Regexp::Assemble::Compressed->new;
     $re_pfx->add('\+33', '0033', '0');
 
     my $parser = Spreadsheet::ParseExcel->new;
