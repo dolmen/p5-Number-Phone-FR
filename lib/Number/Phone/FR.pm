@@ -117,6 +117,19 @@ sub is_in_use
     undef
 }
 
+sub _num
+{
+    my $num = shift;
+    my $class = ref $num;
+    if ($class) {
+	$num = ${$num};
+    } else {
+	$class = $Class;
+	$num = shift;
+    }
+    return ($class, $num);
+}
+
 # Vérifie les chiffres du numéro de ligne
 # Les numéros spéciaux ne matchent pas
 sub _check_line
@@ -129,24 +142,26 @@ sub _check_line
 	$class = $Class;
 	$num = shift;
     }
-    return 0 unless $num =~ $class->RE_SUBSCRIBER;
-    my $line = $1;
+    my @matches = ($num =~ $class->RE_SUBSCRIBER);
+    return 0 unless @matches;
+    my $line = (grep { defined } @matches)[0];
     return 1 if $line =~ shift;
     undef
 }
 
 sub is_geographic
 {
+    return _check_line(@_, qr/^[1-5].{8}$/)
 }
 
 sub is_fixed_line
 {
-    return _check_line(@_, qr/^[12345]/)
+    return _check_line(@_, qr/^[1-5].{8}$/)
 }
 
 sub is_mobile
 {
-    return _check_line(@_, qr/^[67]/)
+    return _check_line(@_, qr/^[67].{8}$/)
 }
 
 sub is_pager
@@ -237,9 +252,12 @@ sub subscriber
 	$class = $Class;
 	$num = shift;
     }
-    return $1 if $num =~ $class->RE_SUBSCRIBER;
-    #print "# $1\n";
-    undef;
+    #return $1 if $num =~ $class->RE_SUBSCRIBER;
+    #undef;
+    my @m = ($num =~ $class->RE_SUBSCRIBER);
+    return undef unless @m;
+    @m = grep { defined } @m;
+    $m[0];
 }
 
 my %length_to_format = (
