@@ -19,8 +19,12 @@ sub RE_0() {
     qr/[% RE_0 %]/
 }
 
+sub RE_SUBSCRIBER() {
+    qr/^(?:[% RE_SUBSCRIBER %])$/
+}
+
 sub RE_FULL() {
-    qr/[% RE_FULL %]/
+    qr/^(?:[% RE_FULL %])$/
 }
 
 sub RE_PFX() {
