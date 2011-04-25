@@ -202,7 +202,6 @@ sub is_government
 
 sub is_international
 {
-    my $num = shift; $num = ref $num ? ${$num} : shift;
     undef
 }
 
