@@ -1,3 +1,7 @@
+use v5.010;
+use strict;
+use warnings;
+
 package inc::Build::Author;
 
 =head1 NAME
@@ -20,8 +24,6 @@ donnE<eacute>es les plus rE<eacute>centes de l'ARCEP.
 
 =cut
 
-use strict;
-use v5.10.0;
 use feature 'switch';
 use Module::Build;
 our @ISA;
