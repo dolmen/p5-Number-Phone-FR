@@ -6,28 +6,35 @@ package Number::Phone::FR;
 
 our $VERSION = '0.01';
 
-use Carp;
 use Number::Phone;
-
 use parent 'Number::Phone';
 
+use Carp;
+use Scalar::Util 'blessed';
 
-our $Class = __PACKAGE__;
 
 
 # Select the implementation based on $Number::Phone::FR::Class
 # The $Class will be loaded below when is_valid is called
+
+our $Class = __PACKAGE__;
+
 sub _get_class
 {
     return $_[0] if (@_ && $_[0] ne __PACKAGE__);
     return $Class;
 }
 
-sub country_code() { 33 }
+sub _load_class
+{
+    my $p = shift;
+    $p =~ s!::|'!/!g;
+    $p .= '.pm';
+    #print "$p\n";
+    eval ' require $p; 1 ' unless exists $INC{$p};
+}
 
-#$Number::Phone::subclasses{country_code()} = __PACKAGE__;
 
-use Scalar::Util 'blessed';
 
 use constant RE_SUBSCRIBER =>
   qr{
@@ -74,6 +81,9 @@ use constant RE_FULL =>
 
 
 
+sub country_code() { 33 }
+
+
 sub new
 {
     my $class = shift;
@@ -92,15 +102,6 @@ sub new
     return is_valid($number) ? bless(\$num, $class) : undef;
 }
 
-
-sub _load_class
-{
-    my $p = shift;
-    $p =~ s!::|'!/!g;
-    $p .= '.pm';
-    #print "$p\n";
-    eval ' require $p; 1 ' unless exists $INC{$p};
-}
 
 sub is_valid
 {
