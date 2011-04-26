@@ -15,6 +15,13 @@ use parent 'Number::Phone';
 our $Class = __PACKAGE__;
 
 
+# Select the implementation based on $Number::Phone::FR::Class
+# The $Class will be loaded below when is_valid is called
+sub _get_class
+{
+    return $_[0] if (@_ && $_[0] ne __PACKAGE__);
+    return $Class;
+}
 
 sub country_code() { 33 }
 
@@ -73,9 +80,7 @@ sub new
     my $number = shift;
     $class = ref $class if ref $class;
 
-    # Select the implementation based on $Number::Phone::FR::Class
-    # The $Class will be loaded below when is_valid is called
-    $class = $Class;
+    $class = _get_class($class);
 
     croak "No number given to ".__PACKAGE__."->new()\n" unless defined $number;
     croak "Invalid phone number (scalar expected)" if ref $number;
@@ -90,7 +95,7 @@ sub new
 
 sub _load_class
 {
-    my $p = $Class;
+    my $p = shift;
     $p =~ s!::|'!/!g;
     $p .= '.pm';
     #print "$p\n";
@@ -102,8 +107,9 @@ sub is_valid
     my ($number) = (@_);
     return 1 if blessed($number) && $number->isa(__PACKAGE__);
 
-    _load_class unless $Class eq __PACKAGE__;
-    return $number =~ $Class->RE_FULL;
+    my $class = _get_class();
+    _load_class($class) unless $class eq __PACKAGE__;
+    return $number =~ $class->RE_FULL;
 }
 
 
