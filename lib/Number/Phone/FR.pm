@@ -304,6 +304,14 @@ sub format
 
 
 
+package Number::Phone::FR::Simple;
+
+use parent 'Number::Phone::FR';
+
+# Number::Phone's implementation of country() does not yet allow
+# clean subclassing so we explicitely implement it here
+sub country() { 'FR' }
+
 1;
 __END__
 =head1 NAME
