@@ -93,9 +93,28 @@ sub ACTION_fetch
     return 1;
 }
 
+
+sub _add_op
+{
+    my ($ops, $op, $num) = @_;
+
+    die "Le code opérateur devrait être sur 4 caractères ($op)" if length($op) > 4;
+
+    $num =~ s/^0//;
+
+    $op .= ' ' x (4 - length $op) if length $op < 4;
+    unless (exists $ops->[0]{$op}) {
+	#print "[$op]\n";
+	push @{ $ops->[1] }, $op;
+	my $count = scalar @{ $ops->[1] };
+	$ops->[0]{$op} = 4 * $count;
+    }
+    $ops->[2]->add($num . ('.{' . $ops->[0]{$op} . '}'));
+}
+
 =head2 parse
 
-Lit le fichier L<wopnum.xls> et reconstruit L<Number::Phone::FR>.
+Lit le fichier L<wopnum.xls> et construit L<Number::Phone::FR:Full>.
 
 =cut
 
@@ -111,7 +130,12 @@ sub ACTION_parse
     my $re_full = Regexp::Assemble::Compressed->new;
     $re_full->add('1[578]', '11[259]', '116000');
     my $re_pfx = Regexp::Assemble::Compressed->new;
-    $re_pfx->add('\+33', '0033', '0');
+    $re_pfx->add('\+33', '0033', '(?:3651)?0');
+    my $ops = [
+        {},  # Operators
+        [],
+        Regexp::Assemble::Compressed->new,
+    ];
 
     my $parser = Spreadsheet::ParseExcel->new;
     my $worksheet = $parser->parse(WOPNUM)->worksheet(0);
@@ -119,22 +143,44 @@ sub ACTION_parse
     my ($col0, undef) = $worksheet->col_range;
     print "$max_row lignes.\n";
     for my $row ($min_row+1..$max_row) {
-        given($worksheet->get_cell($row, $col0)->value) {
-	    when (/^0/) { $re_0->add(substr($_, 1).('[0-9]'x(10-length($_)))); }
-	    when (/^(?:[2-9]|16[0-9]{2})$/) { $re_pfx->add($_); }
+        given ($worksheet->get_cell($row, $col0)->value) {
+            when (/^0/) {
+                my $num_re = substr($_, 1).('[0-9]'x(10-length($_)));
+                $re_0->add($num_re);
+                _add_op($ops,
+                        $worksheet->get_cell($row, $col0+2)->value,
+                        $num_re);
+            }
+            when (/^(?:[2-9]|16[0-9]{2})$/) {
+                $re_pfx->add("(?:3651)?$_");
+            }
+            when (/^[31]...$/) {
+                $re_full->add($_);
+                _add_op($ops,
+                        $worksheet->get_cell($row, $col0+2)->value,
+                        $_.('_'x5));
+            }
 	    when (/^[31]/) { $re_full->add($_); }
         }
     }
-    ($re_0, $re_full, $re_pfx) = map {
-	    my $re = $_->as_string;
+
+    my $re_ops = $ops->[2]->as_string;
+    $re_ops =~ s/^\(?:/(/ or $re_ops = "($re_ops)";
+    ($re_0, $re_full, $re_pfx, $re_ops) = map {
+            my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
 	    print "$re\n";
 	    $re
-	} ($re_0, $re_full, $re_pfx);
+	} ($re_0, $re_full, $re_pfx, $re_ops);
+
+    my $re_subscriber = '('.$re_full.')|'.$re_pfx.'('.$re_0.')';
 
     my %vars = (
 	VERSION => $self->dist_version,
-	RE_0 => $re_0, RE_FULL => $re_full, RE_PFX => $re_pfx
+        RE_0 => $re_0, RE_FULL => $re_subscriber, RE_PFX => $re_pfx,
+        RE_SUBSCRIBER => $re_subscriber,
+        RE_OPERATOR => $re_ops,
+        STR_OPERATORS => join('', @{ $ops->[1] }),
     );
 
     my $tt2 = Template->new(
