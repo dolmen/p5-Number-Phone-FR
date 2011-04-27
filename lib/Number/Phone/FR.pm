@@ -128,15 +128,16 @@ sub is_in_use
     undef
 }
 
-sub _num
+sub _num(\@)
 {
-    my $num = shift;
+    my $args = shift;
+    my $num = shift @$args;
     my $class = ref $num;
     if ($class) {
 	$num = ${$num};
     } else {
 	$class = $Class;
-	$num = shift;
+	$num = shift @$args;
     }
     return ($class, $num);
 }
@@ -145,14 +146,7 @@ sub _num
 # Les numéros spéciaux ne matchent pas
 sub _check_line
 {
-    my $num = shift;
-    my $class = ref $num;
-    if ($class) {
-	$num = ${$num};
-    } else {
-	$class = $Class;
-	$num = shift;
-    }
+    my ($class, $num) = _num(@_);
     my @matches = ($num =~ $class->RE_SUBSCRIBER);
     return 0 unless @matches;
     my $line = (grep { defined } @matches)[0];
@@ -233,9 +227,9 @@ sub is_international
 
 sub is_network_service
 {
-    my $num = shift; $num = ref $num ? ${$num} : shift;
-    return 1 if $num =~ /^1(?:|[578]|0[0-9]{2}|1(?:[259]|6000|8[0-9]{3}))$/;
-    return 0;
+    my ($class, $num) = _num(@_);
+    # Les services réseau sont en direct : jamais de préfixe
+    ($num =~ /^1(?:|[578]|0[0-9]{2}|1(?:[259]|6000|8[0-9]{3}))$/) ? 1 : 0
 }
 
 sub areacode
@@ -255,16 +249,7 @@ sub location
 
 sub subscriber
 {
-    my $num = shift;
-    my $class = ref $num;
-    if ($class) {
-	$num = ${$num};
-    } else {
-	$class = $Class;
-	$num = shift;
-    }
-    #return $1 if $num =~ $class->RE_SUBSCRIBER;
-    #undef;
+    my ($class, $num) = _num(@_);
     my @m = ($num =~ $class->RE_SUBSCRIBER);
     return undef unless @m;
     @m = grep { defined } @m;
@@ -287,14 +272,7 @@ my %length_to_format = (
 
 sub format
 {
-    my $num = shift;
-    my $class = ref $num;
-    if ($class) {
-	$num = ${$num};
-    } else {
-	$class = $Class;
-	$num = shift;
-    }
+    my ($class, $num) = _num(@_);
     my $l = length $num;
     my $fmt = $length_to_format{$l};
     return defined $fmt
