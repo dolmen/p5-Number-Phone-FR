@@ -136,7 +136,7 @@ sub _num(\@)
     if ($class) {
 	$num = ${$num};
     } else {
-	$class = $Class;
+	$class = _get_class();
 	$num = shift @$args;
     }
     return ($class, $num);
