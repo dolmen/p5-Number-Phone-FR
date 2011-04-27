@@ -11,10 +11,6 @@ use Number::Phone::FR;
 use parent 'Number::Phone::FR';
 use Scalar::Util 'blessed';
 
-# Number::Phone's implementation of country() does not yet allow
-# clean subclassing so we explicitely implement it here
-sub country() { 'FR' }
-
 sub RE_0() {
     qr/[% RE_0 %]/
 }
