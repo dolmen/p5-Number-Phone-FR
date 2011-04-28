@@ -12,12 +12,6 @@ use parent 'Number::Phone';
 use Carp;
 use Scalar::Util 'blessed';
 
-# Implementations available
-my %impl = (
-    ':simple' => __PACKAGE__.'::Simple',
-    ':full' => __PACKAGE__.'::Full',
-);
-
 my %pkg2impl;
 
 # Select the implementation to use via "use Number::Phone::FR"
@@ -25,13 +19,13 @@ my %pkg2impl;
 sub import
 {
     my $class = shift;
-    die "invalid class" unless $class->isa(__PACKAGE__);
+    croak "invalid sub-class" unless $class->isa(__PACKAGE__);
     if ($class eq __PACKAGE__) {
         if (@_) {
-            my $impl;
-            foreach my $i (@_) {
-                die "invalid argument '$i'" unless exists $impl{$i};
-                $impl = $impl{$i};
+            foreach my $impl (@_) {
+                $class = $impl;
+                $class =~ s/^:?(.)/\U$1/;
+                substr($class, 0, 0) = __PACKAGE__.'::';
             }
 
             my $level = 0;
@@ -39,11 +33,16 @@ sub import
             while (($pkg = (caller $level)[0]) =~ /^Number::Phone(?:::|$)/) {
                 $level++;
             }
-            $pkg2impl{$pkg} = $impl;
+            $pkg2impl{$pkg} = $class;
+
+            # Load the class
+            eval "require $class";
+            $class->isa(__PACKAGE__) or croak "$class is not a valid class";
         }
     } else {
-        #die "unexpected arguments for import" if @_;
+        #croak "unexpected arguments for import" if @_;
         my $pkg = (caller)[0];
+        croak "$class is private" unless $pkg =~ m/^Number::Phone(?:::|$)/;
         $pkg2impl{$pkg} = $class;
     }
 }
@@ -69,15 +68,6 @@ sub _get_class
     }
     # Default implementation
     return __PACKAGE__;
-}
-
-sub _load_class
-{
-    my $p = shift;
-    $p =~ s!::|'!/!g;
-    $p .= '.pm';
-    #print "$p\n";
-    eval ' require $p; 1 ' unless exists $INC{$p};
 }
 
 
@@ -158,7 +148,6 @@ sub is_valid
     return 1 if blessed($number) && $number->isa(__PACKAGE__);
 
     my $class = _get_class();
-    _load_class($class) unless $class eq __PACKAGE__;
     return $number =~ $class->RE_FULL;
 }
 

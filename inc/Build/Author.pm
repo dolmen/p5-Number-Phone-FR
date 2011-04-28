@@ -192,7 +192,7 @@ sub ACTION_parse
                   binmode => ':utf8');
 
     print "Checking source code validity...\n";
-    my $exit_status = system $^X $^X, qw/-Ilib -MNumber::Phone::FR::Full -e1/;
+    my $exit_status = system $^X $^X, qw/-Ilib -MNumber::Phone::FR=Full -e1/;
     ($exit_status >> 8 == 0) or die "Erreur de validation du source genere: $exit_status";
 }
 
