@@ -13,7 +13,7 @@ use Number::Phone;
 sub impl_test
 {
     my $class = shift;
-    my $pkg = caller[0];
+    my $pkg = (caller)[0];
     subtest "Package $pkg => $class", sub {
         plan tests => 3;
         my $num = Number::Phone->new($numeros[0]);
