@@ -332,15 +332,52 @@ Number::Phone::FR - Phone number information for France (+33)
 
 =head1 SYNOPSIS
 
+    # Use Number::Phone::FR through Number::Phone
     use Number::Phone;
+    my $num = Number::Phone->new('+33158901515');
+
+    # Select a particular implementation
+    use Number::Phone::FR 'Full';
+    my $num = Number::Phone->new('+33158901515');
+
+    use Number::Phone::FR 'Simple';
+    my $num = Number::Phone->new('+33158901515');
+
+
+    # One-liners
+    perl -MNumber::Phone "-Esay Number::Phone->new(q!+33148901515!)->format"
+    perl -MNumber::Phone::FR=Full "-Esay Number::Phone->new(q!+33148901515!)->operator"
+    perl -MNumber::Phone::FR=Full "-Esay Number::Phone::FR->new(q!3949!)->operator"
 
 =head1 DESCRIPTION
 
 This is a subclass of L<Number::Phone> that provide information for phone numbers in France.
 
+Two implementation are provided:
+
+=over 4
+
+=item *
+
+C<Simple>
+
+=item *
+
+C<Full>: a more complete implementation that does checks based on information from the ARCEP.
+
+=back
+
 =head1 DATA SOURCES
 
 L<http://www.arcep.fr/index.php?id=8992>
+
+The tools for rebuilding the Number-Phone-FR CPAN distribution with updated
+data are included in the distribution:
+
+    perl Build.PL
+    ./Build update
+    ./Build
+    ./Build test
 
 =head1 SEE ALSO
 
