@@ -5,8 +5,7 @@ require t::lib::Numeros;
 
 
 use Number::Phone;
-use Number::Phone::FR;
-$Number::Phone::FR::Class = 'Number::Phone::FR::Full';
+use Number::Phone::FR ':full';
 
 use Test::More;
 

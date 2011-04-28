@@ -12,17 +12,63 @@ use parent 'Number::Phone';
 use Carp;
 use Scalar::Util 'blessed';
 
+# Implementations available
+my %impl = (
+    ':simple' => __PACKAGE__.'::Simple',
+    ':full' => __PACKAGE__.'::Full',
+);
+
+my %pkg2impl;
+
+# Select the implementation to use via "use Number::Phone::FR"
+
+sub import
+{
+    my $class = shift;
+    die "invalid class" unless $class->isa(__PACKAGE__);
+    if ($class eq __PACKAGE__) {
+        if (@_) {
+            my $impl;
+            foreach my $i (@_) {
+                die "invalid argument '$i'" unless exists $impl{$i};
+                $impl = $impl{$i};
+            }
+
+            my $level = 0;
+            my $pkg;
+            while (($pkg = (caller $level)[0]) =~ /^Number::Phone(?:::|$)/) {
+                $level++;
+            }
+            $pkg2impl{$pkg} = $impl;
+        }
+    } else {
+        #die "unexpected arguments for import" if @_;
+        my $pkg = (caller)[0];
+        $pkg2impl{$pkg} = $class;
+    }
+}
+
+#END {
+#    foreach (sort keys %pkg2impl) {
+#        print STDERR "# $_ => $pkg2impl{$_}\n";
+#    }
+#}
 
 
-# Select the implementation based on $Number::Phone::FR::Class
-# The $Class will be loaded below when is_valid is called
-
-our $Class = __PACKAGE__;
-
+# Select the implementation based on $pkg2impl
 sub _get_class
 {
-    return $_[0] if (@_ && $_[0] ne __PACKAGE__);
-    return $Class;
+    my ($class) = @_;
+    return $class if defined $class && $class ne __PACKAGE__;
+    my $level = 0;
+    my ($pkg, $impl);
+    while ($pkg = (caller $level)[0]) {
+        $impl = $pkg2impl{$pkg};
+        return $impl if defined $impl;
+        $level++;
+    }
+    # Default implementation
+    return __PACKAGE__;
 }
 
 sub _load_class
@@ -33,7 +79,6 @@ sub _load_class
     #print "$p\n";
     eval ' require $p; 1 ' unless exists $INC{$p};
 }
-
 
 
 use constant RE_SUBSCRIBER =>
