@@ -337,14 +337,14 @@ Number::Phone::FR - Phone number information for France (+33)
 
     # Use Number::Phone::FR through Number::Phone
     use Number::Phone;
-    my $num = Number::Phone->new('+33158901515');
+    my $num = Number::Phone->new('+33148901515');
 
     # Select a particular implementation
     use Number::Phone::FR 'Full';
-    my $num = Number::Phone->new('+33158901515');
+    my $num = Number::Phone->new('+33148901515');
 
     use Number::Phone::FR 'Simple';
-    my $num = Number::Phone->new('+33158901515');
+    my $num = Number::Phone->new('+33148901515');
 
 
     # One-liners
@@ -366,9 +366,16 @@ C<Simple>
 
 =item *
 
-C<Full>: a more complete implementation that does checks based on information from the ARCEP.
+C<Full>: a more complete implementation that does checks based on information
+from the ARCEP.
 
 =back
+
+The implementation is selected for a particular package by importing the
+Number::Phone::FR package with the selected implementation.
+All Number::Phone::FR objects created from this package (either indirectly
+with Number::Phone->new or explicitely with Number::Phone::FR->new) will be
+created using this implementation.
 
 =head1 DATA SOURCES
 
@@ -379,6 +386,7 @@ data are included in the distribution:
 
     perl Build.PL
     ./Build update
+    perl Build.PL
     ./Build
     ./Build test
 
@@ -402,6 +410,13 @@ L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR>
 
 =head1 AUTHOR
 
-Copyright E<copy> 2010-2011 Olivier MenguE<eacute>
+Olivier MenguE<eacute>, C<<<dolmen@cpan.org>>>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright E<copy> 2010-2011 Olivier MenguE<eacute>.
+
+This library is free software; you can redistribute it and/or modify it under
+the same terms as Perl 5 itself.
 
 =cut
