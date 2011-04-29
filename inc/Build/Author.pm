@@ -137,6 +137,8 @@ sub ACTION_parse
         Regexp::Assemble::Compressed->new,
     ];
 
+    my $wopnum_time = (stat WOPNUM)[9];
+
     my $parser = Spreadsheet::ParseExcel->new;
     my $worksheet = $parser->parse(WOPNUM)->worksheet(0);
     my ($min_row, $max_row) = $worksheet->row_range;
@@ -175,8 +177,12 @@ sub ACTION_parse
 
     my $re_subscriber = '('.$re_full.')|'.$re_pfx.'('.$re_0.')';
 
+    use lib 'lib';
+    require Number::Phone::FR;
+    my $version = Number::Phone::FR->VERSION().POSIX::strftime('%2y%3j', localtime($wopnum_time));
+
     my %vars = (
-	VERSION => $self->dist_version,
+	VERSION => $version,
         RE_0 => $re_0, RE_FULL => $re_subscriber, RE_PFX => $re_pfx,
         RE_SUBSCRIBER => $re_subscriber,
         RE_OPERATOR => $re_ops,
@@ -194,6 +200,13 @@ sub ACTION_parse
     print "Checking source code validity...\n";
     my $exit_status = system $^X $^X, qw/-Ilib -MNumber::Phone::FR=Full -e1/;
     ($exit_status >> 8 == 0) or die "Erreur de validation du source genere: $exit_status";
+    if ($version ne $self->dist_version) {
+	# Force a "./Build" deprecation (redo "perl Build.PL")
+	# as the distribution must be rebuilt
+        unlink $_ for grep { -e $_ } qw(Build Build.bat Build.COM build.com BUILD.COM);
+        print "Version updated @{ +$self->dist_version } => $version\n";
+        print "Build script removed. Redo 'perl Build.PL'.\n";
+    }
 }
 
 =head2 update

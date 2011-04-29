@@ -4,6 +4,9 @@ use warnings;
 
 package Number::Phone::FR;
 
+# $VERSION is limited to 2 digits after the dot
+# Other digits are reserved for ARCEP data versonning
+# in Number::Phone::FR::Full
 our $VERSION = '0.01';
 
 use Number::Phone;
