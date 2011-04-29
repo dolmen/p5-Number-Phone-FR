@@ -128,7 +128,8 @@ sub ACTION_parse
 
     my $re_0 = Regexp::Assemble::Compressed->new;
     my $re_full = Regexp::Assemble::Compressed->new;
-    $re_full->add('1[578]', '11[259]', '116000');
+    my $re_network = Regexp::Assemble::Compressed->new;
+    $re_network->add('1[578]', '11[259]', '116000');
     my $re_pfx = Regexp::Assemble::Compressed->new;
     $re_pfx->add('\+33', '0033', '(?:3651)?0');
     my $ops = [
@@ -156,26 +157,29 @@ sub ACTION_parse
             when (/^(?:[2-9]|16[0-9]{2})$/) {
                 $re_pfx->add("(?:3651)?$_");
             }
-            when (/^[31]...$/) {
+            when (/^3...$/) {
                 $re_full->add($_);
                 _add_op($ops,
                         $worksheet->get_cell($row, $col0+2)->value,
                         $_.('_'x5));
             }
-	    when (/^[31]/) { $re_full->add($_); }
+	    when (/^1/) { $re_network->add($_); }
         }
     }
 
+    my $re_all = Regexp::Assemble::Compressed->new;
+    $re_all->add($re_network, $re_full, "$re_pfx$re_0");
+
     my $re_ops = $ops->[2]->as_string;
     $re_ops =~ s/^\(?:/(/ or $re_ops = "($re_ops)";
-    ($re_0, $re_full, $re_pfx, $re_ops) = map {
+    ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
 	    print "$re\n";
 	    $re
-	} ($re_0, $re_full, $re_pfx, $re_ops);
+	} ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all);
 
-    my $re_subscriber = '('.$re_full.')|'.$re_pfx.'('.$re_0.')';
+    my $re_subscriber = "($re_full)|$re_pfx($re_0)";
 
     use lib 'lib';
     require Number::Phone::FR;
@@ -183,7 +187,9 @@ sub ACTION_parse
 
     my %vars = (
 	VERSION => $version,
-        RE_0 => $re_0, RE_FULL => $re_subscriber, RE_PFX => $re_pfx,
+        RE_0 => $re_0,
+        RE_FULL => $re_all,
+        RE_PFX => $re_pfx,
         RE_SUBSCRIBER => $re_subscriber,
         RE_OPERATOR => $re_ops,
         STR_OPERATORS => join('', @{ $ops->[1] }),
