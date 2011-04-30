@@ -33,8 +33,11 @@ my $builder = $build_module->new(
 		},
 	},
 	requires => {
+		'perl' => '5.008001',
 		'Number::Phone' => '1.7004',
 		'parent' => '0.221',
+		'Scalar::Util' => 0,
+		'Carp' => 0,
 	},
 	configure_requires => {
 		'Module::Build' => '0.36',
