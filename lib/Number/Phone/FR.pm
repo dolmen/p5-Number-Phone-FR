@@ -377,9 +377,32 @@ All Number::Phone::FR objects created from this package (either indirectly
 with Number::Phone->new or explicitely with Number::Phone::FR->new) will be
 created using this implementation.
 
+=head1 VERSIONNING
+
+The C<Number-Phone-FR> distribution contains different modules which have
+their own versions:
+
+=over 4
+
+=item *
+
+Number::Phone::FR : C<m.nn> (I<major> . I<minor>)
+
+=item *
+
+L<Number::Phone::FR::Full> : C<m.nnyyddd> (I<major> . I<minor> I<year> I<day-of-year>)
+
+=back
+
+C<m.nn> is the versionning of the code. Common for the two packages.
+
+C<yyddd> is the versionning of the ARCEP data.
+
 =head1 DATA SOURCES
 
 L<http://www.arcep.fr/index.php?id=8992>
+
+It looks like ARCEP publishes updates about every month.
 
 The tools for rebuilding the Number-Phone-FR CPAN distribution with updated
 data are included in the distribution:
