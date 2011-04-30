@@ -230,6 +230,13 @@ sub ACTION_update
     $self->SUPER::depends_on(qw'fetch parse');
 }
 
+sub ACTION_tag
+{
+    my $self = shift;
+    print 'git tag -a -m "CPAN release '.$self->dist_version.'" release-'.$self->dist_version."\n";
+    print "git push github --tags\n";
+}
+
 1;
 __END__
 
