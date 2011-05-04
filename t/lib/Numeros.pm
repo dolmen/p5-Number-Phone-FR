@@ -1,3 +1,7 @@
+use utf8;
+use strict;
+use warnings;
+
 package Numeros;
 
 our @network = qw(
