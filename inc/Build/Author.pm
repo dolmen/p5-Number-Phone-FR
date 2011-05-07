@@ -210,8 +210,8 @@ sub ACTION_parse
 	# Force a "./Build" deprecation (redo "perl Build.PL")
 	# as the distribution must be rebuilt
         unlink $_ for grep { -e $_ } qw(Build Build.bat Build.COM build.com BUILD.COM);
-        print "Version updated @{ +$self->dist_version } => $version\n";
-        print "Build script removed. Redo 'perl Build.PL'.\n";
+        print 'Version updated ', $self->dist_version, " => $version\n",
+              "Build script removed. Redo 'perl Build.PL'.\n";
     }
 }
 
