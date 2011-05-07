@@ -1,7 +1,9 @@
 Revision history for Number::Phone::FR.
 
-0.02
+0.0211122    2011-05-07    DOLMEN (Olivier Mengué)
 	Full.pm: Fixed regexp anchoring in operator lookup.
+	More release tests.
+	ARCEP data: 2011-05-02.
 
 0.0111101    2011-04-30    DOLMEN (Olivier Mengué)
 	First CPAN release.
