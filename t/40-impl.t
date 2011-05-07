@@ -4,7 +4,8 @@ use warnings;
 use lib 't/lib';
 use Numeros;
 
-use Test::More tests => 5;
+use Test::More tests => 5 + 1;
+use Test::NoWarnings;
 
 my @numeros = @Numeros::intl;
 

@@ -45,6 +45,7 @@ my $builder = $build_module->new(
 	},
 	build_requires => {
 		'Test::More' => '0.94',
+        'Test::NoWarnings' => '1.02',
 	},
 );
 

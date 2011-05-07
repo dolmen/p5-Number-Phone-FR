@@ -8,10 +8,11 @@ use Number::Phone;
 use Number::Phone::FR ':full';
 
 use Test::More;
+use Test::NoWarnings;
 
 my @operators = keys %Numeros::operators;
 
-plan tests => scalar @operators;
+plan tests => scalar @operators + 1;
 
 foreach my $op (@operators) {
     subtest "Operateur $op", sub {
@@ -35,4 +36,3 @@ foreach my $op (@operators) {
     }
 }
 
-done_testing;

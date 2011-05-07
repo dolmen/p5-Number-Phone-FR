@@ -14,7 +14,9 @@ use Test::More tests =>
     + 2*(@Numeros::lignes * @Numeros::prefixes)
     + 9*(@Numeros::lignes_geo * @Numeros::prefixes)
     + 5*(@Numeros::network)
-    + 7*(@Numeros::lignes_mobiles * @Numeros::prefixes);
+    + 7*(@Numeros::lignes_mobiles * @Numeros::prefixes)
+    + 1;
+use Test::NoWarnings;
 
 
 foreach (@Numeros::ok) {

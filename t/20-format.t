@@ -6,7 +6,9 @@ use Number::Phone::FR;
 use lib 't/lib';
 use Numeros;
 
-use Test::More tests => 2*@Numeros::formatted;
+use Test::More tests => 2*@Numeros::formatted
+                      + 1;
+use Test::NoWarnings;
 
 foreach my $fmt (@Numeros::formatted) {
     my $s = $fmt;

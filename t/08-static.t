@@ -2,11 +2,11 @@ use strict;
 use warnings;
 
 use Test::More;
-
+use Test::NoWarnings;
 
 my @impl = map { "Number::Phone::FR$_" } ('', qw(::Simple ::Full));
 
-plan tests => scalar @impl;
+plan tests => scalar @impl + 1;
 
 foreach my $impl (@impl) {
     subtest $impl, sub {
