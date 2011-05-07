@@ -4,7 +4,10 @@ use warnings;
 
 package Number::Phone::FR::Full;
 
-our $VERSION = '[% VERSION %]';
+our $VERSION;
+BEGIN {
+    $VERSION = '[% VERSION %]';
+}
 
 use Number::Phone::FR;
 
