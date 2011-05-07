@@ -32,7 +32,7 @@ sub operator
     my $num = Number::Phone::FR::subscriber(@_);
     return unless defined $num;
     $num .= '_' x (9 - length($num));
-    if ("${num}[% STR_OPERATORS %]" =~ m/[% RE_OPERATOR %]/) {
+    if ("${num}[% STR_OPERATORS %]" =~ m/^[% RE_OPERATOR %]/) {
         my $op = substr($1, -4);
         $op =~ s/ *$//;
         return $op;
