@@ -65,6 +65,8 @@ sub _fetch
     my ($self, $url, $file) = @_;
     require LWP::UserAgent;
     require HTTP::Date;
+    require File::Copy;
+    require File::Spec;
 
     my $ua = LWP::UserAgent->new;
     $ua->agent($self->dist_name.'/'.$self->dist_name);
@@ -73,6 +75,16 @@ sub _fetch
     die "$file: $rsp->status_line\n" unless $rsp->is_success;
     my $t = HTTP::Date::str2time($rsp->header('Last-Modified'));
     utime $t, $t, $file;
+
+    my @t = localtime($t);
+    my @f = ($file =~ m/^(.*)\.([^.]*)$/);
+    my $f = sprintf('%s.%04d-%02u-%02u.%s', $f[0], 1900+$t[5], $t[4]+1, $t[3], $f[1]);
+    unless (-f $f) {
+        File::Copy::syscopy($file, $f);
+        print $f, "\n";
+    }
+
+    utime $t, $t, $file, $f;
 }
 
 =head1 ACTIONS
