@@ -441,7 +441,7 @@ L<Number::Phone>
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR>
 
 The latest available source code (work in progress) is published on GitHub:
-L<https://github.com/dolmen/Number-Phone-FR>
+L<https://github.com/dolmen/p5-Number-Phone-FR>
 
 =head1 AUTHOR
 

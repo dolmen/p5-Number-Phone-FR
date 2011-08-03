@@ -114,7 +114,7 @@ formulaireE<nbsp>:
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR>
 
 Le dernier source disponible (travail en cours) est publié sur GitHubE<nbsp>:
-L<https://github.com/dolmen/Number-Phone-FR>
+L<https://github.com/dolmen/p5-Number-Phone-FR>
 
 =head1 AUTEUR
 
