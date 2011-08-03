@@ -335,19 +335,21 @@ Number::Phone::FR - Phone number information for France (+33)
 
 =head1 SYNOPSIS
 
-    # Use Number::Phone::FR through Number::Phone
+Use Number::Phone::FR through Number::Phone:
+
     use Number::Phone;
     my $num = Number::Phone->new('+33148901515');
 
-    # Select a particular implementation
+Select a particular implementation of Number::Phone::FR for this package:
+
     use Number::Phone::FR 'Full';
     my $num = Number::Phone->new('+33148901515');
 
     use Number::Phone::FR 'Simple';
     my $num = Number::Phone->new('+33148901515');
 
+One-liners:
 
-    # One-liners
     perl -MNumber::Phone "-Esay Number::Phone->new(q!+33148901515!)->format"
     perl -MNumber::Phone::FR=Full "-Esay Number::Phone->new(q!+33148901515!)->operator"
     perl -MNumber::Phone::FR=Full "-Esay Number::Phone::FR->new(q!3949!)->operator"
