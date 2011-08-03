@@ -359,6 +359,9 @@ One-liners:
 This is a subclass of L<Number::Phone> that provides information for phone
 numbers in France.
 
+I<B<Note:> Cette documentation est E<eacute>galement disponible en
+franE<ccedil>ais dans L<POD2::FR::Number::Phone::FR>.>
+
 Two implementations are provided:
 
 =over 4
