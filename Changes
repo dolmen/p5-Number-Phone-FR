@@ -1,5 +1,11 @@
 Revision history for Number::Phone::FR.
 
+0.0411185    2011-08-03    DOLMEN (Olivier Mengué)
+        Forgot to update MANIFEST in 0.03, so french documentation was not
+          bundled :(
+        Renamed repository on Github to p5-Number-Phone-FR.
+        ARCEP data: 2011-07-04.
+
 0.0311185    2011-08-03    DOLMEN (Olivier Mengué)
         Minor rework of the documentation.
         Added documentation in french.
