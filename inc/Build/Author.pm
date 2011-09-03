@@ -77,7 +77,7 @@ sub _fetch
     utime $t, $t, $file;
 
     my @t = localtime($t);
-    my @f = ($file =~ m/^(.*)\.([^.]*)$/);
+    my @f = ($file =~ m/\A(.*)\.([^.]*)\z/);
     my $f = sprintf('%s.%04d-%02u-%02u.%s', $f[0], 1900+$t[5], $t[4]+1, $t[3], $f[1]);
     unless (-f $f) {
         File::Copy::syscopy($file, $f);
@@ -112,7 +112,7 @@ sub _add_op
 
     die "Le code opérateur devrait être sur 4 caractères ($op)" if length($op) > 4;
 
-    $num =~ s/^0//;
+    $num =~ s/\A0//;
 
     $op .= ' ' x (4 - length $op) if length $op < 4;
     unless (exists $ops->[0]{$op}) {
@@ -159,23 +159,23 @@ sub ACTION_parse
     print "$max_row lignes.\n";
     for my $row ($min_row+1..$max_row) {
         given ($worksheet->get_cell($row, $col0)->value) {
-            when (/^0/) {
+            when (/\A0/) {
                 my $num_re = substr($_, 1).('[0-9]'x(10-length($_)));
                 $re_0->add($num_re);
                 _add_op($ops,
                         $worksheet->get_cell($row, $col0+2)->value,
                         $num_re);
             }
-            when (/^(?:[2-9]|16[0-9]{2})$/) {
+            when (/\A(?:[2-9]|16[0-9]{2})\z/) {
                 $re_pfx->add("(?:3651)?$_");
             }
-            when (/^3...$/) {
+            when (/\A3...\z/) {
                 $re_full->add($_);
                 _add_op($ops,
                         $worksheet->get_cell($row, $col0+2)->value,
                         $_.('_'x5));
             }
-	    when (/^1/) { $re_network->add($_); }
+	    when (/\A1/) { $re_network->add($_); }
         }
     }
 
@@ -183,7 +183,7 @@ sub ACTION_parse
     $re_all->add($re_network, $re_full, "$re_pfx$re_0");
 
     my $re_ops = $ops->[2]->as_string;
-    $re_ops =~ s/^\(?:/(/ or $re_ops = "($re_ops)";
+    $re_ops =~ s/\A\(?:/(/ or $re_ops = "($re_ops)";
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
