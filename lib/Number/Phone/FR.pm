@@ -76,7 +76,7 @@ sub _get_class
 
 use constant RE_SUBSCRIBER =>
   qr{
-    ^
+    \A
     (?:
        \+33          # Préfixe international (+33 numéro)
      | (?:3651)?
@@ -85,12 +85,12 @@ use constant RE_SUBSCRIBER =>
        | 16 [0-9]{2} # Sélection du transporteur
        ) (?:033)?    # Préfixe international (0033 numéro)
     ) ([1-9][0-9]{8})  # Numéro de ligne
-    $
+    \z
   }xs;
 
 use constant RE_FULL =>
   qr{
-  ^ (?:
+  \A (?:
     1 (?:
         0[0-9]{2}  # Opérateur
       | 5          # SAMU
@@ -113,7 +113,7 @@ use constant RE_FULL =>
        | 16 [0-9]{2} # Sélection du transporteur
        ) (?:033)?    # Préfixe international (0033 numéro)
     ) [1-9][0-9]{8}  # Numéro de ligne
-  ) $
+  ) \z
   }xs;
 
 
@@ -139,7 +139,7 @@ sub new
 
     my $num = $number;
     $num =~ s/[^+0-9]//g;
-    return Number::Phone->new("+$1") if $num =~ /^(?:\+|00)((?:[^3]|3[^3]).*)$/;
+    return Number::Phone->new("+$1") if $num =~ /\A(?:\+|00)((?:[^3]|3[^3]).*)\z/;
 
     return is_valid($number) ? bless(\$num, $class) : undef;
 }
@@ -193,17 +193,17 @@ sub _check_line
 
 sub is_geographic
 {
-    return _check_line(@_, qr/^[1-5].{8}$/)
+    return _check_line(@_, qr/\A[1-5].{8}\z/)
 }
 
 sub is_fixed_line
 {
-    return _check_line(@_, qr/^[1-5].{8}$/)
+    return _check_line(@_, qr/\A[1-5].{8}\z/)
 }
 
 sub is_mobile
 {
-    return _check_line(@_, qr/^[67].{8}$/)
+    return _check_line(@_, qr/\A[67].{8}\z/)
 }
 
 sub is_pager
@@ -213,7 +213,7 @@ sub is_pager
 
 sub is_ipphone
 {
-    return _check_line(@_, qr/^9/)
+    return _check_line(@_, qr/\A9/)
 }
 
 sub is_isdn
@@ -225,20 +225,20 @@ sub is_tollfree
 {
     #return 1 
     # FIXME Gérer les préfixes
-    return 0 unless $_[1] =~ /^08[0-9]{8}$/;
+    return 0 unless $_[1] =~ /\A08[0-9]{8}\z/;
     undef
 }
 
 sub is_specialrate
 {
     # FIXME Gérer les préfixes
-    return 0 unless $_[1] =~ /^08[0-9]{8}$/;
+    return 0 unless $_[1] =~ /\A08[0-9]{8}\z/;
     1
 }
 
 sub is_adult
 {
-    return 0 unless _check_line(@_, qr/^8/);
+    return 0 unless _check_line(@_, qr/\A8/);
     undef
 }
 
@@ -266,7 +266,7 @@ sub is_network_service
 {
     my ($class, $num) = _num(@_);
     # Les services réseau sont en direct : jamais de préfixe
-    ($num =~ /^1(?:|[578]|0[0-9]{2}|1(?:[259]|6000|8[0-9]{3}))$/) ? 1 : 0
+    ($num =~ /\A1(?:|[578]|0[0-9]{2}|1(?:[259]|6000|8[0-9]{3}))\z/) ? 1 : 0
 }
 
 sub areacode
@@ -295,16 +295,16 @@ sub subscriber
 
 my %length_to_format = (
     # 2 => as is
-    4 => sub { s/^(..)(..)/$1 $2/ },
-    6 => sub { s/^(...)(...)/$1 $2/ },
+    4 => sub { s/\A(..)(..)/$1 $2/ },
+    6 => sub { s/\A(...)(...)/$1 $2/ },
     10 => sub { s/(\d\d)(?=.)/$1 /g },
     13 => sub {
-	       s/^(00)(33)(.)(..)(..)(..)(..)$/+$2 $3 $4 $5 $6 $7/
-	    || s/^(....)(.)(..)(..)(..)(..)$/+33 $1 $2 $3 $4 $5 $6/
+	       s/\A(00)(33)(.)(..)(..)(..)(..)\z/+$2 $3 $4 $5 $6 $7/
+	    || s/\A(....)(.)(..)(..)(..)(..)\z/+33 $1 $2 $3 $4 $5 $6/
 	  },
-    14 => sub { s/^(....)(..)(..)(..)(..)(..)$/$1 $2 $3 $4 $5 $6/ },
-    12 => sub { s/^(\+33)(.)(..)(..)(..)(..)$/$1 $2 $3 $4 $5 $6/ },
-    16 => sub { s/^(\+33)(....)(.)(..)(..)(..)(..)$/$1 $2 $3 $4 $5 $6 $7/ },
+    14 => sub { s/\A(....)(..)(..)(..)(..)(..)\z/$1 $2 $3 $4 $5 $6/ },
+    12 => sub { s/\A(\+33)(.)(..)(..)(..)(..)\z/$1 $2 $3 $4 $5 $6/ },
+    16 => sub { s/\A(\+33)(....)(.)(..)(..)(..)(..)\z/$1 $2 $3 $4 $5 $6 $7/ },
 );
 
 sub format
