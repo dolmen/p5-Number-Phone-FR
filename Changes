@@ -1,5 +1,9 @@
 Revision history for Number::Phone::FR.
 
+0.0511217    2011-09-03    DOLMEN (Olivier Mengué)
+        Use \A and \z instead of ^ and $ in regexps.
+        ARCEP data: 2011-08-05.
+
 0.0411185    2011-08-03    DOLMEN (Olivier Mengué)
         Forgot to update MANIFEST in 0.03, so french documentation was not
           bundled :(
