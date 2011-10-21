@@ -72,7 +72,7 @@ sub _fetch
     $ua->agent($self->dist_name.'/'.$self->dist_name);
     $ua->env_proxy;
     my $rsp = $ua->get($url, ':content_file' => $file);
-    die "$file: $rsp->status_line\n" unless $rsp->is_success;
+    die "$file: @{[ $rsp->status_line ]}\n" unless $rsp->is_success;
     my $t = HTTP::Date::str2time($rsp->header('Last-Modified'));
     utime $t, $t, $file;
 
