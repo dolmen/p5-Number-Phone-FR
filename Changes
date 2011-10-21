@@ -1,7 +1,8 @@
 Revision history for Number::Phone::FR.
 
 0.05
-	Add examples/format.pl
+	Add examples/format.pl.
+	Add README.
 
 0.0511217    2011-09-03    DOLMEN (Olivier Mengué)
         Use \A and \z instead of ^ and $ in regexps.
