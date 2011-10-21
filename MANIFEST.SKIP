@@ -76,3 +76,4 @@
 \bNumber-Phone-FR-[\d\.\_]+
 \.xls$
 \.csv$
+^Debian_CPANTS.txt$
