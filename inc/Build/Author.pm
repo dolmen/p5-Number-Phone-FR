@@ -138,16 +138,16 @@ sub ACTION_parse
     require Regexp::Assemble::Compressed;
     require Template;
 
-    my $re_0 = Regexp::Assemble::Compressed->new;
-    my $re_full = Regexp::Assemble::Compressed->new;
-    my $re_network = Regexp::Assemble::Compressed->new;
+    my $re_0 = Regexp::Assemble::Compressed->new(chomp => 0);
+    my $re_full = Regexp::Assemble::Compressed->new(chomp => 0);
+    my $re_network = Regexp::Assemble::Compressed->new(chomp => 0);
     $re_network->add('1[578]', '11[259]', '116000');
-    my $re_pfx = Regexp::Assemble::Compressed->new;
+    my $re_pfx = Regexp::Assemble::Compressed->new(chomp => 0);
     $re_pfx->add('\+33', '0033', '(?:3651)?0');
     my $ops = [
         {},  # Operators
         [],
-        Regexp::Assemble::Compressed->new,
+        Regexp::Assemble::Compressed->new(chomp => 0),
     ];
 
     my $wopnum_time = (stat WOPNUM)[9];
@@ -180,10 +180,17 @@ sub ACTION_parse
     }
 
     my $re_all = Regexp::Assemble::Compressed->new;
-    $re_all->add($re_network, $re_full, "$re_pfx$re_0");
+    $re_all->add("$re_network|$re_full|$re_pfx(?:$re_0)");
+    #$re_all->add($re_network, $re_full, "$re_pfx(?:$re_0)");
+    #$re_all->add($re_network);
+    #$re_all->add($re_full);
+    #$re_all->add("$re_pfx$re_0");
+    #eval 'qr/'.$re_network->as_string.'/;1' or die $@;
+    #eval 'qr/'.$re_full->as_string.'/;1' or die $@;
+    eval 'qr/'.$re_all->as_string.'/;1' or die $@;
 
     my $re_ops = $ops->[2]->as_string;
-    $re_ops =~ s/\A\(?:/(/ or $re_ops = "($re_ops)";
+    #$re_ops =~ s/\A\(?:/(/ or $re_ops = "($re_ops)";
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
@@ -217,7 +224,7 @@ sub ACTION_parse
 
     print "Checking source code validity...\n";
     my $exit_status = system $^X $^X, qw/-Ilib -MNumber::Phone::FR=Full -e1/;
-    ($exit_status >> 8 == 0) or die "Erreur de validation du source genere: $exit_status";
+    ($exit_status >> 8 == 0) or die "Erreur de validation du source genere: $exit_status\n";
     if ($version ne $self->dist_version) {
 	# Force a "./Build" deprecation (redo "perl Build.PL")
 	# as the distribution must be rebuilt
