@@ -39,7 +39,6 @@ sub import
             # Load the class
             eval "require $class; 1" or croak "$@\n";
             $class->isa(__PACKAGE__) or croak "$class is not a valid class";
-	print $class->RE_FULL, "\n";
         }
     } else {
         #croak "unexpected arguments for import" if @_;
@@ -325,6 +324,10 @@ sub format
 package Number::Phone::FR::Simple;
 
 use parent 'Number::Phone::FR';
+
+BEGIN {
+    $INC{'Number/Phone/FR/Simple.pm'} = __FILE__;
+}
 
 1;
 __END__
