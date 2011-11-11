@@ -190,7 +190,7 @@ sub ACTION_parse
     eval 'qr/'.$re_all->as_string.'/;1' or die $@;
 
     my $re_ops = $ops->[2]->as_string;
-    #$re_ops =~ s/\A\(?:/(/ or $re_ops = "($re_ops)";
+
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;

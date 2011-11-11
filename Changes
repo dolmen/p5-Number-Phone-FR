@@ -1,8 +1,11 @@
 Revision history for Number::Phone::FR.
 
-0.05
-	Add examples/format.pl.
-	Add README.
+0.06
+	Fix loading of :Full and :Simple (loading was broken since a few
+	  releases, and the tests did not correctly test).
+	Fix ->opterator in :Full (broken since a few releases).
+	Add "examples/format.pl" file.
+	Add "README" file.
 
 0.0511217    2011-09-03    DOLMEN (Olivier Mengué)
         Use \A and \z instead of ^ and $ in regexps.
