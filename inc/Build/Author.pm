@@ -108,20 +108,18 @@ sub ACTION_fetch
 
 sub _add_op
 {
-    my ($ops, $op, $num) = @_;
+    my ($op_num, $op, $num) = @_;
 
     die "Le code opérateur devrait être sur 4 caractères ($op)" if length($op) > 4;
 
     $num =~ s/\A0//;
 
     $op .= ' ' x (4 - length $op) if length $op < 4;
-    unless (exists $ops->[0]{$op}) {
-	#print "[$op]\n";
-	push @{ $ops->[1] }, $op;
-	my $count = scalar @{ $ops->[1] };
-	$ops->[0]{$op} = 4 * $count;
+    if (exists $op_num->{$op}) {
+	push @{ $op_num->{$op} }, $num;
+    } else {
+	$op_num->{$op} = [ $num ];
     }
-    $ops->[2]->add($num . ('.{' . $ops->[0]{$op} . '}'));
 }
 
 =head2 parse
@@ -144,11 +142,7 @@ sub ACTION_parse
     $re_network->add('1[578]', '11[259]', '116000');
     my $re_pfx = Regexp::Assemble::Compressed->new(chomp => 0);
     $re_pfx->add('\+33', '0033', '(?:3651)?0');
-    my $ops = [
-        {},  # Operators
-        [],
-        Regexp::Assemble::Compressed->new(chomp => 0),
-    ];
+    my $op_num = {};
 
     my $wopnum_time = (stat WOPNUM)[9];
 
@@ -162,7 +156,7 @@ sub ACTION_parse
             when (/\A0/) {
                 my $num_re = substr($_, 1).('[0-9]'x(10-length($_)));
                 $re_0->add($num_re);
-                _add_op($ops,
+                _add_op($op_num,
                         $worksheet->get_cell($row, $col0+2)->value,
                         $num_re);
             }
@@ -171,7 +165,7 @@ sub ACTION_parse
             }
             when (/\A3...\z/) {
                 $re_full->add($_);
-                _add_op($ops,
+                _add_op($op_num,
                         $worksheet->get_cell($row, $col0+2)->value,
                         $_.('_'x5));
             }
@@ -189,12 +183,31 @@ sub ACTION_parse
     #eval 'qr/'.$re_full->as_string.'/;1' or die $@;
     eval 'qr/'.$re_all->as_string.'/;1' or die $@;
 
-    my $re_ops = $ops->[2]->as_string;
+    # Compte le nombre de blocs de numéro pour chaque opérateur
+    my %blocks_count = map { ($_ => scalar @{$op_num->{$_}}) } keys %$op_num;
+    require JSON;
+    say JSON->new->encode(\%blocks_count);
+    # Trie les opérateurs par ordre décroissant du nombre de blocks gérés
+    my @ops = sort { $blocks_count{$b} <=> $blocks_count{$a} || $a cmp $b } keys %blocks_count;
+    my $re_ops = Regexp::Assemble::Compressed->new(chomp => 0);
+    my $n = 0;
+    foreach my $op (@ops) {
+	$n += 4;
+	my $suffix = ".{$n}";
+	foreach my $num (sort @{$op_num->{$op}}) {
+	    $re_ops->add($num . $suffix);
+	}
+    }
+    $re_ops = $re_ops->as_string;
+    # Supprime "(?:"...")" redondant avec "("...")" que l'on ajoute après
+    $re_ops =~ s/^\(\?:// && $re_ops =~ s/\)$//;
 
+
+    # Nettoyage du résultat boggué de Regexp::Assemble :
+    #  remplace "\d" par "[0-9]" (car pas équivalent dans le monde Unicode)
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
-	    print "$re\n";
 	    $re
 	} ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all);
 
@@ -211,7 +224,7 @@ sub ACTION_parse
         RE_PFX => $re_pfx,
         RE_SUBSCRIBER => $re_subscriber,
         RE_OPERATOR => $re_ops,
-        STR_OPERATORS => join('', @{ $ops->[1] }),
+        STR_OPERATORS => join('', @ops),
     );
 
     my $tt2 = Template->new(
