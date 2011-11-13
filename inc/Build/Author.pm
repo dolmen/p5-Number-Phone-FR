@@ -31,6 +31,7 @@ BEGIN {
     push @ISA, 'Module::Build';
 }
 
+
 sub WOPNUM() { 'wopnum.xls' }
 
 sub new
@@ -143,6 +144,7 @@ sub ACTION_parse
     my $re_pfx = Regexp::Assemble::Compressed->new(chomp => 0);
     $re_pfx->add('\+33', '0033', '(?:3651)?0');
     my $op_num = {};
+    my %op_count = ();
 
     my $wopnum_time = (stat WOPNUM)[9];
 
@@ -156,18 +158,22 @@ sub ACTION_parse
             when (/\A0/) {
                 my $num_re = substr($_, 1).('[0-9]'x(10-length($_)));
                 $re_0->add($num_re);
+                my $op = $worksheet->get_cell($row, $col0+2)->value;
                 _add_op($op_num,
-                        $worksheet->get_cell($row, $col0+2)->value,
+                        $op,
                         $num_re);
+                $op_count{$op} += 10 ** (10-length);
             }
             when (/\A(?:[2-9]|16[0-9]{2})\z/) {
                 $re_pfx->add("(?:3651)?$_");
             }
             when (/\A3...\z/) {
                 $re_full->add($_);
+                my $op = $worksheet->get_cell($row, $col0+2)->value;
                 _add_op($op_num,
-                        $worksheet->get_cell($row, $col0+2)->value,
+                        $op,
                         $_.('_'x5));
+                $op_count{$op}++;
             }
 	    when (/\A1/) { $re_network->add($_); }
         }
@@ -183,22 +189,32 @@ sub ACTION_parse
     #eval 'qr/'.$re_full->as_string.'/;1' or die $@;
     eval 'qr/'.$re_all->as_string.'/;1' or die $@;
 
+    # Trie les opérateurs par ordre décroissant du nombre de numéros gérés
+    my @ops = sort { $op_count{$b} <=> $op_count{$a} || $a cmp $b } keys %op_count;
+    # Affiche le top 14
+    printf(scalar( "%9s  "x 7 ."\n"."%9d  "x 7 ."\n" ) x 2,
+	   @ops[0..6], @op_count{@ops[0..6]},
+	   @ops[7..13], @op_count{@ops[7..13]});
+    undef %op_count;
+
     # Compte le nombre de blocs de numéro pour chaque opérateur
     my %blocks_count = map { ($_ => scalar @{$op_num->{$_}}) } keys %$op_num;
-    # Trie les opérateurs par ordre décroissant du nombre de blocks gérés
-    my @ops = sort { $blocks_count{$b} <=> $blocks_count{$a} || $a cmp $b } keys %blocks_count;
-    # Affiche le top 13
-    printf "%4s  "x 13 ."\n"."%4d  "x 13 ."\n", @ops[0..12], @blocks_count{@ops[0..12]};
+    # Trie les opérateurs par ordre décroissant du nombre de blocs gérés
+    # Ceci donne une regexp plus courte (".{4}" < ".{324}")
+    @ops = sort { $blocks_count{$b} <=> $blocks_count{$a} || $a cmp $b } keys %blocks_count;
+    undef %blocks_count;
 
     my $re_ops = Regexp::Assemble::Compressed->new(chomp => 0);
     my $n = 0;
     foreach my $op (@ops) {
 	$n += 4;
 	my $suffix = ".{$n}";
-	foreach my $num (sort @{$op_num->{$op}}) {
+	foreach my $num (sort @{delete $op_num->{$op}}) {
 	    $re_ops->add($num . $suffix);
 	}
     }
+    undef $op_num;
+
     $re_ops = $re_ops->as_string;
     # Supprime "(?:"...")" redondant avec "("...")" que l'on ajoute après
     $re_ops =~ s/^\(\?:// && $re_ops =~ s/\)$//;
