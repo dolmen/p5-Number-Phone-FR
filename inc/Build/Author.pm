@@ -111,10 +111,10 @@ sub _add_op
     my ($op_num, $op, $num) = @_;
 
     die "Le code opérateur devrait être sur 4 caractères ($op)" if length($op) > 4;
+    die qq{Code opérateur avec espace à la fin ("$op")} if $op =~ /\s$/;
 
     $num =~ s/\A0//;
 
-    $op .= ' ' x (4 - length $op) if length $op < 4;
     if (exists $op_num->{$op}) {
 	push @{ $op_num->{$op} }, $num;
     } else {
@@ -185,10 +185,11 @@ sub ACTION_parse
 
     # Compte le nombre de blocs de numéro pour chaque opérateur
     my %blocks_count = map { ($_ => scalar @{$op_num->{$_}}) } keys %$op_num;
-    require JSON;
-    say JSON->new->encode(\%blocks_count);
     # Trie les opérateurs par ordre décroissant du nombre de blocks gérés
     my @ops = sort { $blocks_count{$b} <=> $blocks_count{$a} || $a cmp $b } keys %blocks_count;
+    # Affiche le top 13
+    printf "%4s  "x 13 ."\n"."%4d  "x 13 ."\n", @ops[0..12], @blocks_count{@ops[0..12]};
+
     my $re_ops = Regexp::Assemble::Compressed->new(chomp => 0);
     my $n = 0;
     foreach my $op (@ops) {
@@ -224,7 +225,7 @@ sub ACTION_parse
         RE_PFX => $re_pfx,
         RE_SUBSCRIBER => $re_subscriber,
         RE_OPERATOR => $re_ops,
-        STR_OPERATORS => join('', @ops),
+        STR_OPERATORS => join('', map { 4 == length($_) ? $_ : $_.(' 'x(4-length $_)) } @ops),
     );
 
     my $tt2 = Template->new(
