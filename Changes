@@ -1,5 +1,8 @@
 Revision history for Number::Phone::FR.
 
+0.0611350    2011-12-21    DOLMEN (Olivier Mengué)
+	ARCEP data: 2011-12-16.
+
 0.0611311    2011-11-13    DOLMEN (Olivier Mengué)
 	Fix loading of :Full and :Simple (loading was broken since a few
 	  releases, and the tests did not correctly test).
