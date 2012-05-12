@@ -9,7 +9,7 @@ use File::Spec;
 
 my $build_module = 'Module::Build';
 
-my $FR_Full_pm = File::Spec->catfile qw(lib Number Phone FR Full.pm);
+my $FR_Full_pm = File::Spec->catfile(qw(lib Number Phone FR Full.pm));
 
 # Use the extended build only in author environment
 if (-d '.git' || ! -f $FR_Full_pm) {
