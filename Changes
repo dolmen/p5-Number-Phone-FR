@@ -1,5 +1,13 @@
 Revision history for Number::Phone::FR.
 
+0.0612174    2012-07-03    DOLMEN (Olivier Mengué)
+	ARCEP data: 2012-06-22.
+
+0.0612132    2012-05-12    DOLMEN (Olivier Mengué)
+	Fixes a 5.14 warning about qw() in Build.PL.
+	ARCEP data: 2012-05-11.
+	Never pushed to the CPAN.
+
 0.0612093    2012-04-11    DOLMEN (Olivier Mengué)
 	ARCEP data: 2012-04-02.
 
