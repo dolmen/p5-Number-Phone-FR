@@ -1,0 +1,8 @@
+language: perl
+perl:
+    - "5.10"
+    - "5.12"
+    - "5.14"
+    # Not yet supported by Travis
+    #- "5.16"
+script: "perl Build.PL && { ./Build update || perl Build.PL ; } && ./Build test"
