@@ -8,6 +8,8 @@ perl:
 before_install: cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template Test::Pod Test::Pod::Coverage Test::Kwalitee
 script:
     - perl Build.PL
+    - ./Build manifest
     - ./Build update
     - perl Build.PL
+    - ./Build manifest
     - AUTHOR_TESTING=1 RELEASE_TESTING=1 ./Build test
