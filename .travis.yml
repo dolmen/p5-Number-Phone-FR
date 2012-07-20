@@ -12,4 +12,5 @@ script:
     - ./Build update
     - perl Build.PL
     - ./Build manifest
-    - AUTHOR_TESTING=1 RELEASE_TESTING=1 ./Build test
+    - ./Build distmeta
+    - AUTHOR_TESTING=1 RELEASE_TESTING=1 ./Build disttest
