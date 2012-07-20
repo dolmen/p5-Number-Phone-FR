@@ -77,3 +77,4 @@
 \.xls$
 \.csv$
 ^Debian_CPANTS.txt$
+^.travis.yml$

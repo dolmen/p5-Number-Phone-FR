@@ -3,6 +3,7 @@ perl:
     - "5.10"
     - "5.12"
     - "5.14"
-    # Not yet supported by Travis
-    #- "5.16"
+    - "5.16"
+# Modules nécessaire pour le mode auteur (Build update)
+before_install: cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template
 script: "perl Build.PL && { ./Build update || perl Build.PL ; } && ./Build test"
