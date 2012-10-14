@@ -3,6 +3,7 @@ Revision history for Number::Phone::FR.
 0.0712272    2012-10-14    DOLMEN (Olivier Mengué)
 	Fix perl 5.8 & 5.10 compatibility issues in regexps. Add regression
 	  testing (using Regexp::Parser) to avoid this later.
+	ARCEP data: 2012-09-28.
 
 0.0612272    2012-10-12    DOLMEN (Olivier Mengué)
 	ARCEP data: 2012-09-28.
