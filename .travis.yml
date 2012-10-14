@@ -7,7 +7,11 @@ perl:
 # Modules nécessaire pour le mode auteur (Build update)
 # TODO utiliser "./Build installdeps" car on l'a surchargé pour les
 #      dépendances auteur
-before_install: cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template Test::Pod Test::Pod::Coverage Test::Kwalitee Test::MinimumVersion Regexp::Parser
+before_install:
+    - cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template Test::Pod Test::Pod::Coverage Test::MinimumVersion Regexp::Parser
+    # Test::Kwalitee indépendant car il est long à installer et Travis-CI
+    # limite le temps d'exécution d'une commande à 15 mn
+    - cpanm --notest Test::Kwalitee
 script:
     - perl Build.PL
     - ./Build manifest
