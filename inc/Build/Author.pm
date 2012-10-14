@@ -223,7 +223,7 @@ sub ACTION_parse
 
     $re_ops = $re_ops->as_string;
     # Supprime "(?:"...")" redondant avec "("...")" que l'on ajoute après
-    $re_ops =~ s/^\(\?:// && $re_ops =~ s/\)$//;
+    $re_ops =~ s/^\(\?^?:// && $re_ops =~ s/\)$//;
 
 
     # Nettoyage du résultat boggué de Regexp::Assemble :
@@ -231,6 +231,8 @@ sub ACTION_parse
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
+	    # Compatibilité perl 5.8
+	    $re =~ s/\Q(?^:/(?:/g;
 	    $re
 	} ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all);
 
