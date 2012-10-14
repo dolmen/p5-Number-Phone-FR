@@ -48,6 +48,11 @@ my %build_requires = (
     'Spreadsheet::ParseExcel' => 0,
     'Regexp::Assemble' => 0,
     'Template' => 0,
+    'Test::MinimumVersion' => 0,
+    'Regexp::Parser' => '0.21',
+    'Test::Pod' => 0,
+    'Test::Pod::Coverage' => 0,
+    'Test::Kwalitee' => 0,
 );
 
 sub ACTION_installdeps
