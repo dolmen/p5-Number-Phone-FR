@@ -7,7 +7,7 @@ package Number::Phone::FR;
 # $VERSION is limited to 2 digits after the dot
 # Other digits are reserved for ARCEP data versonning
 # in Number::Phone::FR::Full
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Number::Phone;
 use parent 'Number::Phone';
