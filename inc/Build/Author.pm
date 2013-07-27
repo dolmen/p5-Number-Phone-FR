@@ -108,6 +108,7 @@ sub ACTION_fetch
 {
     my $self = shift;
     $self->_fetch('http://www.arcep.fr/fileadmin/wopnum.xls', WOPNUM);
+    $self->_fetch('https://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/fr/33.txt', 'libphonenumber-33.txt');
     return 1;
 }
 

@@ -10,6 +10,7 @@
 /lib/Number/Phone/FR/Full.pm
 /Number-Phone-FR-*
 wopnum*.xls
+libphonenumber-33*
 *.bak
 *.old
 *.tmp
