@@ -25,6 +25,8 @@ donnE<eacute>es les plus rE<eacute>centes de l'ARCEP.
 =cut
 
 use feature 'switch';
+use experimental 'smartmatch';
+
 use Module::Build;
 our @ISA;
 BEGIN {
