@@ -36,6 +36,7 @@ BEGIN {
 
 sub GELNUM() { 'gelnum.xls' }
 sub MAJNUM() { 'majnum.xls' }
+sub MAJSDT() { 'majsdt.xls' }
 
 sub new
 {
@@ -112,6 +113,7 @@ sub ACTION_fetch
     my $self = shift;
     $self->_fetch('https://extranet.arcep.fr/portail/LinkClick.aspx?fileticket=Qov2Ms0K3nI%3d&tabid=217&portalid=0&mid=850', GELNUM);
     $self->_fetch('https://extranet.arcep.fr/portail/LinkClick.aspx?fileticket=PBA1WK-wnOU%3d&tabid=217&portalid=0&mid=850', MAJNUM);
+    $self->_fetch('https://extranet.arcep.fr/portail/LinkClick.aspx?fileticket=du7yxSdf91o%3d&tabid=217&portalid=0&mid=850', MAJSDT);
     $self->_fetch('https://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/fr/33.txt', 'libphonenumber-33.txt');
     return 1;
 }
@@ -142,7 +144,7 @@ Lit le fichier L<wopnum.xls> et construit L<Number::Phone::FR:Full>.
 sub ACTION_parse
 {
     my $self = shift;
-    -f MAJNUM or $self->SUPER::depends_on('fetch');
+    (-f MAJNUM && -f MAJSDT) or $self->SUPER::depends_on('fetch');
     require Spreadsheet::ParseExcel;
     require Regexp::Assemble::Compressed;
     require Template;
@@ -176,7 +178,7 @@ sub ACTION_parse
                 $op_count{$op} += 10 ** (10-length);
             }
             when (/\A(?:[2-9]|16[0-9]{2})\z/) {
-                $re_pfx->add("(?:3651)?$_");
+                die "operator prefixes are now in MAJSDT.XLS\n"
             }
             when (/\A3...\z/) {
                 $re_full->add($_);
@@ -189,6 +191,20 @@ sub ACTION_parse
 	    when (/\A1/) { $re_network->add($_); }
         }
     }
+    undef $worksheet;
+
+    # Fichier des préfixes opérateurs
+    $worksheet = $parser->parse(MAJSDT)->worksheet(0);
+    ($min_row, $max_row) = $worksheet->row_range;
+    ($col0, undef) = $worksheet->col_range;
+    for my $row ($min_row+1..$max_row) {
+	my $num = $worksheet->get_cell($row, $col0)->value;
+	$num =~ s/ //g;
+        my $op = $worksheet->get_cell($row, $col0+3)->value;
+        $re_pfx->add("(?:3651)?$num");
+    }
+    undef $worksheet;
+    undef $parser;
 
     my $re_all = Regexp::Assemble::Compressed->new;
     $re_all->add("$re_network|$re_full|$re_pfx(?:$re_0)");
@@ -328,3 +344,6 @@ L<http://www.arcep.fr/>
 
 Olivier MenguE<eacute>, C<<<dolmen@cpan.org>>>
 
+=cut
+
+# :vim:set et stw=4:
