@@ -10,6 +10,10 @@
 /lib/Number/Phone/FR/Full.pm
 /Number-Phone-FR-*
 wopnum*.xls
+majnum*.xls
+majsdt*.xls
+gelnum*.xls
+/doc/
 libphonenumber-33*
 *.bak
 *.old
