@@ -1,9 +1,10 @@
 Revision history for Number::Phone::FR.
 
-0.0814210    2014-07-29    DOLMEN (Olivier Mengué)
+0.0814210    2014-08-16    DOLMEN (Olivier Mengué)
 	Change data source input format, following changes by ARCEP since
 	  december 2013.
 	ARCEP data: 2014-07-29.
+	Release on "CPAN day". #cpanday
 
 0.0713196    2013-07-27    DOLMEN (Olivier Mengué)
 	ARCEP data: 2013-07-15.
