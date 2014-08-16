@@ -387,9 +387,7 @@ created using this implementation.
 
 =head1 DATA SOURCES
 
-L<http://www.arcep.fr/index.php?id=8992>
-
-It looks like ARCEP publishes updates about twice a month.
+L<https://extranet.arcep.fr/portail/Op%C3%A9rateursCE/Num%C3%A9rotation.aspx#PUB>
 
 The tools for rebuilding the Number-Phone-FR CPAN distribution with updated
 data are included in the distribution:
@@ -451,7 +449,7 @@ Olivier MenguE<eacute>, L<mailto:dolmen@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright E<copy> 2010-2011 Olivier MenguE<eacute>.
+Copyright E<copy> 2010-2014 Olivier MenguE<eacute>.
 
 This library is free software; you can redistribute it and/or modify it under
 the same terms as Perl 5 itself.
