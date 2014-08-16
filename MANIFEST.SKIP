@@ -75,6 +75,8 @@
 # Avoid archives of this distribution
 \bNumber-Phone-FR-[\d\.\_]+
 \.xls$
+\.pdf$
+^doc/
 ^libphonenumber.*
 \.csv$
 ^Debian_CPANTS.txt$
