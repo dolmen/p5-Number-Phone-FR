@@ -4,6 +4,9 @@ perl:
     - "5.12"
     - "5.14"
     - "5.16"
+    - "5.18"
+    - "5.20"
+sudo: false
 # Modules nécessaire pour le mode auteur (Build update)
 # TODO utiliser "./Build installdeps" car on l'a surchargé pour les
 #      dépendances auteur
