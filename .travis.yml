@@ -10,7 +10,7 @@ sudo: false
 # Modules nécessaire pour le mode auteur (Build update)
 # TODO utiliser "./Build installdeps" car on l'a surchargé pour les
 #      dépendances auteur
-before_install:
+install:
     # Regexp::Assemble 0.35 has POD tests failing
     - cpanm --notest Regexp::Assemble
     - cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template Test::Pod Test::Pod::Coverage Test::MinimumVersion Regexp::Parser
