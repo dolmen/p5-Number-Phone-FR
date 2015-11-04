@@ -13,7 +13,7 @@ sudo: false
 install:
     # Regexp::Assemble 0.35 has POD tests failing
     - cpanm --notest Regexp::Assemble
-    - cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template Test::Pod Test::Pod::Coverage Test::MinimumVersion Regexp::Parser
+    - cpanm --notest LWP::UserAgent HTTP::Date File::Copy File::Spec Spreadsheet::ParseExcel Regexp::Assemble::Compressed Template Test::Pod Test::Pod::Coverage Test::MinimumVersion Regexp::Parser experimental
     # Test::Kwalitee indépendant car il est long à installer et Travis-CI
     # limite le temps d'exécution d'une commande à 15 mn
     - cpanm --notest Test::Kwalitee
