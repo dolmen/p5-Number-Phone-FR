@@ -17,6 +17,7 @@ install:
     # Test::Kwalitee indépendant car il est long à installer et Travis-CI
     # limite le temps d'exécution d'une commande à 15 mn
     - cpanm --notest Test::Kwalitee
+    - cpanm Number::Phone
 script:
     - perl Build.PL
     - ./Build manifest
