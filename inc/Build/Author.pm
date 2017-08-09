@@ -51,6 +51,7 @@ my %build_requires = (
     'HTTP::Date' => '0',
     'Spreadsheet::ParseExcel' => 0,
     'Regexp::Assemble' => 0,
+    'Regexp::Optimizer' => 0,
     'Template' => 0,
     'Test::MinimumVersion' => 0,
     'Regexp::Parser' => '0.21',
@@ -147,6 +148,7 @@ sub ACTION_parse
     (-f MAJNUM && -f MAJSDT) or $self->SUPER::depends_on('fetch');
     require Spreadsheet::ParseExcel;
     require Regexp::Assemble::Compressed;
+    require Regexp::Optimizer;
     require Template;
     require Regexp::Parser;
 
@@ -251,6 +253,7 @@ sub ACTION_parse
     #  remplace "\d" par "[0-9]" (car pas équivalent dans le monde Unicode)
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
+            $re = Regexp::Optimizer->as_string($re);
 	    $re =~ s/\\d/[0-9]/g;
 	    # Compatibilité perl 5.8
 	    $re =~ s/\Q(?^:/(?:/g;
